@@ -36,8 +36,8 @@ gem "image_processing", ">= 1.2"
 
 
 group :development, :test do
-  gem "tzinfo-data", platforms: %i[ windows jruby ]
-  gem "debug", platforms: %i[ mri windows ]
+  gem "tzinfo-data"
+  gem "debug"
 end
 
 group :development do
