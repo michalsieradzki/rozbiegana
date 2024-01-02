@@ -29,7 +29,6 @@ gem "sqlite3", "~> 1.4"
 gem "stimulus-rails"
 gem "turbo-rails"
 gem "simple_calendar", "~> 2.4"
-gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 #active_storage
 gem 'image_magick', '~> 0.1.9'
@@ -37,6 +36,7 @@ gem "image_processing", ">= 1.2"
 
 
 group :development, :test do
+  gem "tzinfo-data", platforms: %i[ windows jruby ]
   gem "debug", platforms: %i[ mri windows ]
 end
 
