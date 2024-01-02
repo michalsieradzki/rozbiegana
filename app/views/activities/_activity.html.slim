@@ -1,0 +1,97 @@
+.my-4.w-100.activity-card  id="#{dom_id(activity)}"
+  - if activity.image.attached?
+    = image_tag activity.image, class: "activity-image"
+    .modal.fade[tabindex="-1" id="pictureModal#{activity.id}" aria-labelledby="exampleModalLabel" aria-hidden="true"]
+      .modal-header
+        button.btn-close[type="button" data-bs-dismiss="modal" aria-label="Close"]
+      .modal-dialog.modal-fullscreen
+        .modal-content
+          =image_tag activity.image
+  .activity-aside
+    .font-weight-light
+      strong
+        = activity.user.username
+      |  dodał(a) aktywność 
+      = time_ago_in_words(activity.created_at)
+      |  temu 
+      = render "likecounter", activity: activity
+      .display-5.text-center
+        = activity.distance
+        |  km 
+    p
+      = activity.description
+    ul.list-group.list-group-flush
+      li.list-group-item
+        | Czas: 
+        = activity.hours
+        | :
+        = activity.minutes
+        | :
+        = activity.seconds
+      li.list-group-item
+        | Średnie tempo: 
+        = calculate_pace(activity.hours, activity.minutes, activity.seconds, activity.distance)
+      li.list-group-item
+
+          -if activity.user.team.name == "Zieloni"
+            | Punkty dla drużyny: 
+            h5.text-success
+              = activity.user.team.name
+              |  +  
+              = activity.score
+              br
+          -elsif activity.user.team.name == "Pomarańczowi"
+            h5.text-warning
+              = activity.user.team.name
+              |  +  
+              = activity.score
+              br
+          -elsif activity.user.team.name == "Niebiescy"
+            h5.text-primary
+              = activity.user.team.name
+              |  +  
+              = activity.score
+              br
+          -else
+            h5.text-secondary
+              = activity.user.team.name
+              |  +  
+              = activity.score
+            br
+        
+      - if activity.user == current_user
+        li.list-group-item
+          .d-flex.flex-row
+            = link_to "Edytuj aktywność", edit_activity_path(activity), class: "btn btn-outline-success mx-2"
+            = link_to "Usuń aktywność", activity, data: { turbo_method: :delete, turbo_confirm: "Czy napewno usunąć aktywność?" }, class: "btn btn-outline-danger mx-2" 
+
+    a.btn.btn-success.btn-sm.w-100 data-bs-toggle="collapse" href="#collapseExample#{activity.id}" role="button" aria-expanded="false" aria-controls="collapseExample"
+      | ↓ Komentarze ↓ (#{activity.comments.count})
+
+    div.collapse id="collapseExample#{activity.id}"
+      - activity.comments.each do |comment|
+        div.card.m-1.d-flex.flex-row.align-items-center
+          div.card-body.d-flex.flex-column.justify-content-start.p-1.my-1
+            div
+              small
+                strong = "#{comment.user.username}:"
+            = " #{comment.content}"
+          - if comment.user == current_user
+            = button_to comment_path(comment), method: :delete, class: "btn btn-sm btn-outline-danger mx-3", form: { data: {turbo_confirm: "Czy napewno usunąć komentarz?"} } do 
+              i.bi.bi-trash
+
+      div.card.m-1.w-75
+        = render 'comments/form', comment: @comment, activity: activity || @activity
+  .modal.fade[id="likesmodal#{activity.id}" tabindex="-1" aria-labelledby="likesModalLabel" aria-hidden="true"]
+    .modal-dialog.modal-dialog-centered
+      .modal-content
+        .modal-header
+          h5#exampleModalLabel.modal-title
+            | Osoby które polubiły tą aktywność:
+          button.btn-close[type="button" data-bs-dismiss="modal" aria-label="Close"]
+        .modal-body.text-center
+          -activity.likes.each do |like|
+            =like.user.username 
+            br
+
+   

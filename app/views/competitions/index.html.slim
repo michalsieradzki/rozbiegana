@@ -1,0 +1,41 @@
+h1 Konkurs
+h2 
+  | Aktualny stan:
+  h1.w-100.text-white.lh-lg.shadow-lg
+    .bg-success.m-1.text-shadow[style="width: #{@green_percent}%"]
+      = @green_score
+    .bg-warning.m-1.text-shadow[style="width: #{@orange_percent}%"]
+      = @orange_score 
+    .bg-primary.m-1.text-shadow[style="width: #{@blue_percent}%"]
+      = @blue_score
+h2 Najlepiej punktujący zawodnicy:
+br
+table.table.table-stripped
+  thead
+    tr
+      th Zawodnik
+      th Punkty
+  tbody
+    - @users.each do |user|
+      tr
+        -if user.team.name == "Zieloni"
+          td.table-success
+            = user.username
+          td.table-success
+            = user.total_score
+        -elsif user.team.name == "Pomarańczowi"
+          td.table-warning
+            = user.username
+          td.table-warning  
+            = user.total_score
+        -elsif user.team.name == "Niebiescy"
+          td.table-primary
+            = user.username
+          td.table-primary
+            = user.total_score
+        -else
+          td
+            = user.username
+          td  
+            = user.total_score
+

@@ -1,0 +1,53 @@
+<div class="my-4 w-100 activity-card" id="<%= dom_id activity %>">
+  <% if activity.image.attached? %>
+    <%= image_tag activity.image, class: "activity-image" %>
+  <% end %>
+  <div class="activity-aside">
+    <h5>
+      <strong><%= activity.user.username %></strong> dodał(a) aktywność <%= time_ago_in_words(activity.created_at) %> temu 
+    </h5>
+
+    <%= render "likecounter", activity: activity %>
+    
+    <h2 class="text-center">
+      <%= activity.distance %> km
+    </h2>
+    <p><%= activity.description %></p>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Czas: <%= activity.hours %>:<%= activity.minutes %>:<%= activity.seconds %></li>
+      <li class="list-group-item">Średnie tempo: <%= calculate_pace(activity.hours, activity.minutes, activity.seconds, activity.distance) %></li>
+  
+      <% if activity.user == current_user%>
+        <li class="list-group-item">
+          <div class="d-flex flex-row">
+              <%= link_to "Edytuj aktywność", edit_activity_path(activity), class: "btn btn-outline-success mx-2" %>
+              <%= button_to "Usuń", activity_path(activity), method: :delete, class: "btn btn-outline-danger",form: { data: {turbo_confirm: "Czy napewno usunąć tą aktywność?"}} %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+    <a class="btn btn-success btn-sm w-100" data-bs-toggle="collapse" href="#collapseExample<%=activity.id%>" role="button" aria-expanded="false" aria-controls="collapseExample">
+      ↓ Komentarze ↓ (<%= activity.comments.count %>)
+    </a>
+    <div class="collapse" id="collapseExample<%=activity.id%>">
+      
+      <% activity.comments.each do |comment| %>
+        <div class="card m-1" >
+          
+          <div class="card-body d-flex justify-content-between p-1">
+            <p><strong><%= comment.user.username %>: </strong><%= comment.content %></p>
+            
+            <% if comment.user == current_user %>
+              <%= button_to "✕", comment_path(comment), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: {turbo_confirm: "Czy napewno usunąć komentarz?"} }%>
+            <% end %>
+          </div>
+        </div>
+        <% end %>
+      <div class="card m-1 w-75" >
+        <%= render 'comments/form', comment: @comment, activity: activity || @activity %>
+      </div>
+    </div>
+  </div>
+</div>
+
+

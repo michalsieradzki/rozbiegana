@@ -1,0 +1,25 @@
+doctype html
+html
+  head
+    title
+      | Rozbiegana
+    meta[name="viewport" content="width=device-width,initial-scale=1"]
+    = csrf_meta_tags
+    = csp_meta_tag
+    = stylesheet_link_tag "application", "data-turbo-track": "reload"
+    link[rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"]
+    link[rel="manifest" crossorigin="use-credentials" href="/manifest.json"]
+    = javascript_importmap_tags
+    / = javascript_include_tag "application", "data-turbo-track": "reload", defer: true, type: "module"
+    / = javascript_include_tag "application", "data-turbo-track": "reload", "type": "module", defer: true
+    = favicon_link_tag asset_path('favicon.ico')
+  body
+    = render 'layouts/navbar'
+    .container.mt-2[style="max-width: 900px;"]
+      - if notice
+        p.alert.alert-success
+          = notice
+      - if alert
+        p.alert.alert-danger
+          = alert
+      = yield

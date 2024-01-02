@@ -1,0 +1,8 @@
+h2.text-center.mt-4
+  | Edycja aktywności
+= render "form", activity: @activity
+br
+div
+  = link_to "Pokaz aktywność", @activity
+  |  | 
+  = link_to "Powrót", :back

@@ -1,0 +1,26 @@
+h1
+  | Profil biegacza
+= link_to "Dodaj aktywność", new_activity_path, class: "btn btn-success m-2 mb-4"
+table.table.table-hover.table-sm
+  tbody
+    tr
+      th[scope="row"]
+        = link_to 'Najdłższy bieg', activity_path(@activities.order(distance: :desc).first)
+      td
+        = @activities.maximum(:distance)
+      td
+        =@activities.order(distance: :desc).first.created_at
+    tr
+      th[scope="row"]
+        = link_to 'Najszybszy bieg', activity_path(@top_pace)
+      td[colspan="2"]
+        = form_pace(@top_pace.pace)
+    tr
+      th[scope="row"]
+        | Suma wszystkich biegów
+      td
+        = @activities.sum(:distance)
+      td
+#activities.d-flex.flex-wrap
+  - @activities.each do |activity|
+    = render partial: 'activitysmall', locals: {activity: activity}

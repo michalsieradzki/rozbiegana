@@ -1,0 +1,43 @@
+nav.navbar.navbar-expand-lg.navbar-light.bg-light
+  .container-fluid.d-flex.justify-content-around.mt-3
+    = render 'layouts/notifications'
+    = link_to root_path do
+      = image_tag 'logo-without-bg.png', size: "150x75", class: "jusify-content-start"
+    div
+      button.navbar-toggler[type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"]
+        span.navbar-toggler-icon
+    #navbarSupportedContent.collapse.navbar-collapse
+      - if signed_in?
+        ul.navbar-nav.d-flex.align-items-center.justify-content-center.w-100
+          li.nav-item.p-3
+            = link_to 'Home', root_path, class: "nav-link active"
+          li.nav-item.p-3
+            = link_to "TOP", '/top', class: "nav-link active"
+          li.nav-item.p-3
+            = link_to "Konkurs", '/konkurs', class: "nav-link active"
+          li.nav-item.dropdown
+            a#navbarDropdown.nav-link.dropdown-toggle.active[href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"]
+              |  Mój profil 
+            ul.dropdown-menu.p-3[aria-labelledby="navbarDropdown"]
+              li
+                = link_to "Dodaj aktywność", new_activity_path, class: "dropdown-item p-3"
+              li
+                = link_to 'Moje treningi', '/myactive', class: "dropdown-item p-3"
+              li
+                = link_to "Edytuj profil", edit_user_registration_path, class: "dropdown-item p-3"
+              li
+                hr.dropdown-divider
+              li.d-flex.justify-content-center
+                = button_to 'Wyloguj', destroy_user_session_path, method: :delete, data: { turbo: "false" }, class: "btn btn-outline-danger btn-sm"
+          li.nav-item.p-3
+            - activities = Activity.where(created_at: Time.now.beginning_of_month..Time.now.end_of_month)
+            span.nav-link[href="#"]
+              | W tym miesiącu nabiegaliśmy wspólnie już 
+              = activities.sum(:distance).round(2)
+              |  km!
+      - else
+        ul.navbar-nav.me-auto.mb-2.mb-lg-0
+          li.nav-item.p-3
+            = link_to "Zaloguj się", new_user_session_path, class: "nav-link"
+          li.nav-item.p-3
+            = link_to "Zarejestruj się", new_user_registration_path, class: "nav-link"

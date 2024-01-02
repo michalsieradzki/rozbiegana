@@ -1,0 +1,5 @@
+li
+  -if notification.read_at == nil
+    = link_to notification.to_notification.message, notification.to_notification.url, class: "dropdown-item text-success fw-bold"
+  -else
+    = link_to notification.to_notification.message, notification.to_notification.url, class: "dropdown-item"

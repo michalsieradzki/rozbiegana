@@ -1,0 +1,8 @@
+h1.d-flex.justify-content-center
+  | Aktywności
+.d-flex.justify-content-center
+  = link_to "Dodaj aktywność", new_activity_path, class: "btn btn-success m-2 py-3 w-100"
+#activities.d-flex.flex-wrap
+  - @activities.each do |activity|
+    = render activity
+

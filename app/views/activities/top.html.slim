@@ -1,0 +1,115 @@
+h1.text-center.mb-5
+  | TOP miesiąca 
+  = @current_month_name
+= form_tag('/top', method: 'get', class: "input-group w-25") do
+  - current_month = @month
+  = select_tag(:month, options_for_select(@month_names, @current_month_name), class: "form-select mr-2")
+  = submit_tag('Ustaw', class: "btn btn-outline-success")
+h2.m-3.text-center
+  
+  | Najwięcej kilometrów w miesiącu
+table.table.table-sm.table-hover.mb-5
+  thead
+    tr.text-center
+      th[scope="col"]
+        | Biegacz
+      th[scope="col"]
+        | Dystans
+  tbody
+    - @top_user_distance.each do |user|
+      tr.text-center
+        th[scope="row"]
+          = user[0]
+        td
+          = user[1].round(2)
+h2.m-3.text-center
+  | Najszybsze biegi
+table.table.table-sm.table-hover.mb-5
+  thead
+    tr.text-center
+      th[scope="col"]
+        | Biegacz
+      th[scope="col"]
+        | Dystans
+      th[scope="col"]
+        | Tempo
+      th[scope="col"]
+        | Czas
+      th[scope="col"]
+        | Kiedy
+      th[scope="col"]
+        | Szczegóły
+  tbody
+    - @top_pace.each do |activity|
+      tr.text-center
+        th[scope="row"]
+          = activity.user.username
+        td
+          = activity.distance.round(2)
+        td
+          = Time.at(activity.pace).utc.strftime("%M:%S")
+        td
+          = activity.hours
+          | :
+          = activity.minutes
+          | :
+          = activity.seconds
+        td
+          = time_ago_in_words(activity.created_at)
+          |  temu
+        td
+          = link_to "Szczegóły biegu",activity_path(activity), class: "btn btn-sm btn-outline-success"
+h2.m-3.text-center
+  | Najdłuzsze biegi
+table.table.table-sm.table-hover.mb-5
+  thead
+    tr.text-center
+      th[scope="col"]
+        | Biegacz
+      th[scope="col"]
+        | Dystans
+      th[scope="col"]
+        | Tempo
+      th[scope="col"]
+        | Czas
+      th[scope="col"]
+        | Kiedy
+      th[scope="col"]
+        | Szczegóły
+  tbody
+    - @top_distance.each do |activity|
+      tr.text-center
+        th[scope="row"]
+          = activity.user.username
+        td
+          = activity.distance.round(2)
+        td
+          = Time.at(activity.pace).utc.strftime("%M:%S")
+        td
+          = activity.hours
+          | :
+          = activity.minutes
+          | :
+          = activity.seconds
+        td
+          = time_ago_in_words(activity.created_at)
+          |  temu
+        td
+          = link_to "Szczegóły biegu",activity_path(activity), class: "btn btn-sm btn-outline-success"
+h2.m-3.text-center
+  | Punkty dla swojej drużyny
+table.table.table-sm.table-hover.mb-5
+  thead
+    tr.text-center
+      th[scope="col"]
+        | Biegacz
+  tbody
+    - @users_total_score.each do |user|
+      tr.text-center
+        td
+          = user.username
+
+        td
+          = user.total_score
+
+

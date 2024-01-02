@@ -1,0 +1,22 @@
+= turbo_frame_tag "likecounter#{activity.id}" do
+  - like = current_user.likes.find_by(activity: activity)
+  - likes = Like.where(activity: activity).count
+  div.d-flex.align-items-center
+    - if like.nil?
+      form[action="/likes" method="post"]
+        | <input type="hidden", name="authenticity_token", value="#{form_authenticity_token}">
+        | <input type="hidden", name="like[activity_id]", value="#{activity.id}">
+        | <input type="submit", value="♡", class="heart">
+    - else
+      form[action="#{like_path(like)}" method="post"]
+        | <input type="hidden", name="authenticity_token", value="<%= form_authenticity_token %>"> 
+        | <input type="hidden", name="_method", value="DELETE"> 
+        input.heart[type="submit" value="♥"]
+    - if activity.likes.count == 1
+      span.badge.bg-success data-bs-toggle="modal" data-bs-target="#exampleModal#{activity.id}"
+        = "#{activity.likes.last.user.username} lubi to."
+    - elsif activity.likes.count > 1
+      span.badge.bg-success[type="button" data-bs-toggle="modal" data-bs-target="#likesmodal#{activity.id}"]
+        = "#{activity.likes.last.user.username} oraz #{activity.likes.count-1} użytkowników lubi to."
+
+
