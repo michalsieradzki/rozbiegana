@@ -29,6 +29,5 @@ test:
 
 production:
   <<: *default
-  database: rozbiegana_db_1noy
-  url: postgres://rozbiegana_db_1noy_user:a42wXjvIDp7Ky3VaHhe4UYrtG5dkrtAa@dpg-chsum4m4dad9mude96c0-a/rozbiegana_db_1noy
-
+  database: railway
+  url: postgresql://postgres:gd1eFFDB*654D*a6aFEEcG-Ec14e62Gg@monorail.proxy.rlwy.net:34151/railway
