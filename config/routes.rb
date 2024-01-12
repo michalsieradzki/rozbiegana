@@ -1,14 +1,5 @@
 Rails.application.routes.draw do
-  namespace :admin do
-      resources :activities
-      resources :comments
-      resources :likes
-      resources :notifications
-      resources :teams
-      resources :users
 
-      root to: "activities#index"
-    end
   resources :comments
   resources :activities
   resources :likes, only: [:create, :destroy]
