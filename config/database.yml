@@ -29,5 +29,4 @@ test:
 
 production:
   <<: *default
-  database: railway
-  url: postgresql://postgres:gd1eFFDB*654D*a6aFEEcG-Ec14e62Gg@monorail.proxy.rlwy.net:34151/railway
+  url: <%= ENV['DATABASE_URL'] %>
