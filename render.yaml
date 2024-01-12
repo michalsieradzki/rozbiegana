@@ -1,0 +1,23 @@
+databases:
+  - name: rozbiegana24
+    databaseName: rozbiegana24
+    user: rozbiegana24
+    plan: free
+
+services:
+  - type: web
+    name: rozbiegana24
+    runtime: ruby
+    plan: free
+    buildCommand: "./bin/render-build.sh"
+    # preDeployCommand: "./bin/rails db:migrate" # preDeployCommand only available on paid instance types
+    startCommand: "./bin/rails server"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mysite
+          property: connectionString
+      - key: b31f3810c8d0e2bc76db94e461230d8d
+        sync: false
+      - key: WEB_CONCURRENCY
+        value: 2 # sensible default

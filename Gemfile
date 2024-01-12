@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 ruby "3.2.2"
 gem "rails", "~> 7.1.1"
-gem "pg"
+gem "pg", "~> 1.1"
 
 gem "rubyzip"
 gem "bootsnap", require: false
@@ -20,7 +20,6 @@ gem "puma", ">= 5.0"
 gem 'rails-i18n'
 gem 'slim', '~> 5.1', '>= 5.1.1'
 gem 'slim-rails', '~> 3.6', '>= 3.6.2'
-gem "sqlite3", "~> 1.4"
 gem "stimulus-rails"
 gem "turbo-rails"
 
