@@ -17,7 +17,7 @@ services:
         fromDatabase:
           name: rozbiegana24
           property: connectionString
-      - key: b31f3810c8d0e2bc76db94e461230d8d
+      - key: RAILS_MASTER_KEY
         sync: false
       - key: WEB_CONCURRENCY
         value: 2 # sensible default
