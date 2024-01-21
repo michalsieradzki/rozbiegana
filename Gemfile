@@ -8,6 +8,7 @@ gem "activeadmin"
 gem "rubyzip"
 gem "bootsnap", require: false
 gem 'bootstrap', '~> 5.3', '>= 5.3.1'
+gem 'cloudinary'
 gem 'devise', '~> 4.9', '>= 4.9.3'
 gem 'font-awesome-rails', '~> 4.7', '>= 4.7.0.8'
 gem 'importmap-rails'
