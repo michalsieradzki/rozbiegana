@@ -24,15 +24,11 @@ class Activity < ApplicationRecord
     if user.team == "niesklasyfikowany"
       0
     elsif competition
-       distance.floor * 4
+       distance.floor * 5
     elsif  pace < 301
      distance.floor * 3
-    elsif pace >= 301 && pace < 330
-       distance.floor * 2.5
-    elsif pace >= 330 && pace < 360
+    elsif pace >= 301 && pace < 360
      distance.floor * 2
-    elsif pace >= 360 && pace < 390
-     distance.floor * 1.5
     else 
      distance.floor
     end
