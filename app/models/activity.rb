@@ -6,7 +6,8 @@ class Activity < ApplicationRecord
   has_noticed_notifications model_name: 'Notification', dependent: :delete_all
   has_many :notifications, as: :recipient, dependent: :destroy
 
-  validates :distance, presence: true
+  validates :distance, presence: true, numericality: { greater_than_or_equal_to: 5 }
+
   validates :description, presence: true
   validates :hours, presence: true
   validates :minutes, presence: true
