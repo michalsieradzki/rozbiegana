@@ -400,6 +400,7 @@ DEPENDENCIES
   jquery-rails
   kaminari (~> 1.2, >= 1.2.2)
   letter_opener
+  mail
   noticed (~> 1.6)
   pg (~> 1.1)
   puma (>= 5.0)

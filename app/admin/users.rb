@@ -18,10 +18,19 @@ ActiveAdmin.register User do
   #
   # Uncomment all parameters which should be permitted for assignment
   #
-  permit_params :email, :username, :team_id, :admin
-  #
-  # or
-  #
+  permit_params :email, :username, :team_id, :admin, :password, :password_confirmation
+
+  form do |f|
+    f.semantic_errors
+    f.inputs do
+      f.input :email
+      f.input :password, required: false
+      f.input :password_confirmation, required: false
+      f.input :team_id, as: :select, collection: Team.all
+      f.input :username
+    end
+    f.actions
+  end
   # permit_params do
   #   permitted = [:email, :encrypted_password, :reset_password_token, :reset_password_sent_at, :remember_created_at, :username, :team_id, :admin]
   #   permitted << :other if params[:action] == 'create' && current_user.admin?

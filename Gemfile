@@ -15,6 +15,7 @@ gem 'importmap-rails'
 gem "jbuilder"
 gem 'jquery-rails'
 gem 'kaminari', '~> 1.2', '>= 1.2.2'
+gem 'mail'
 gem "noticed", "~> 1.6"
 gem "sassc-rails"
 gem "sprockets-rails"

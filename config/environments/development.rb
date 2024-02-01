@@ -36,23 +36,23 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  config.action_mailer.delivery_method = :letter_opener
+  # config.action_mailer.delivery_method = :letter_opener
   
-  #MAIL SERVER CONFIGURATION
-  # config.action_mailer.delivery_method = :smtp
+  # MAIL SERVER CONFIGURATION
+  config.action_mailer.delivery_method = :smtp
   
-  # config.action_mailer.smtp_settings = {
-    #   address: 'smtp.mail.com',
-    #   port: 587,
-    #   domain: 'mail.com',
-    #   user_name: 'michal.sieradzki@mail.com',
-    #   password: '',
-    #   authentication: 'plain',
-    #   enable_starttls_auto: true
-    # }
+  config.action_mailer.smtp_settings = {
+      address: 'smtp.mail.com',
+      port: 587,
+      domain: 'mail.com',
+      user_name: 'michal.sieradzki@mail.com',
+      password: 'Zawoja8791!',
+      authentication: 'plain',
+      enable_starttls_auto: true
+    }
     
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.default_url_options = { host: 'http://localhost:3000' }
+  config.action_mailer.default_url_options = { host: 'michal.sieradzki@mail.com' }
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
 
