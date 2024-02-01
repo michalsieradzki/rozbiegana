@@ -76,19 +76,19 @@ Rails.application.configure do
   
   # MAIL SERVER CONFIGURATION
   config.action_mailer.delivery_method = :smtp
+  config.action_mailer.default_url_options = { protocol: 'https', :host => 'rozbieganakruszwica@o2.pl' }
   
   config.action_mailer.smtp_settings = {
-      address: 'smtp.mail.com',
-      port: 587,
-      domain: 'mail.com',
-      user_name: 'michal.sieradzki@mail.com',
-      password: 'Zawoja8791!',
+      address: 'poczta.o2.pl',
+      port: 465,
+      domain: 'o2.pl',
+      user_name: 'rozbieganakruszwica@o2.pl',
+      password: 'fkK_iDer8acpaJ5',
       authentication: 'plain',
       enable_starttls_auto: true
     }
     
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.default_url_options = { host: 'http://localhost:3000' }
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
   # Ignore bad email addresses and do not raise email delivery errors.
