@@ -70,7 +70,7 @@ Rails.application.configure do
   # config.active_job.queue_adapter = :resque
   # config.active_job.queue_name_prefix = "rozbiegana24_production"
 
-  config.active_storage.service = :local
+  config.active_storage.service = :cloudinary
 
   # config.action_mailer.delivery_method = :letter_opener
   
