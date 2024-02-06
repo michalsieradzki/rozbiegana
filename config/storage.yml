@@ -7,9 +7,6 @@ local:
   root: <%= Rails.root.join("data") %>
   parallel_upload: true
 
-production_local:
-  service: Disk
-  root: '/storage'
 
 cloudinary:
   service: Cloudinary
@@ -19,6 +16,10 @@ cloudinary:
   enhance_image_tag: 'true'
   static_file_support: 'true'
   secure: true
+
+# production_local:
+#   service: Disk
+#   root: '/storage'
 
 # production:
 #   service: Disk

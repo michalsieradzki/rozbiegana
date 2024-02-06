@@ -11,7 +11,7 @@
       form[action="#{like_path(like)}" method="post"]
         | <input type="hidden", name="authenticity_token", value="<%= form_authenticity_token %>"> 
         | <input type="hidden", name="_method", value="DELETE"> 
-        input.heart[type="submit" value="♥"]
+        input[type="submit" value="♥", class="heart"]
     - if activity.likes.count == 1
       span.badge.bg-success data-bs-toggle="modal" data-bs-target="#exampleModal#{activity.id}"
         = "#{activity.likes.last.user.username} lubi to."
