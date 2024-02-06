@@ -3,7 +3,7 @@ class Activity < ApplicationRecord
   has_one_attached :image
   has_many :comments, dependent: :delete_all
   has_many :likes, dependent: :delete_all
-  has_noticed_notifications model_name: 'Notification', dependent: :delete_all
+  # has_noticed_notifications model_name: 'Notification', dependent: :delete_all
   has_many :notifications, as: :recipient, dependent: :destroy
 
   validates :distance, presence: true, numericality: { greater_than_or_equal_to: 5 }
