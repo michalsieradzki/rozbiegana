@@ -18,14 +18,14 @@ ActiveAdmin.register User do
   #
   # Uncomment all parameters which should be permitted for assignment
   #
-  permit_params :email, :username, :team_id, :admin, :password, :password_confirmation
+  permit_params :email, :username, :team_id, :admin
 
   form do |f|
     f.semantic_errors
     f.inputs do
       f.input :email
-      f.input :password, required: false
-      f.input :password_confirmation, required: false
+      # f.input :password, required: false
+      # f.input :password_confirmation, required: false
       f.input :team_id, as: :select, collection: Team.all
       f.input :username
     end
