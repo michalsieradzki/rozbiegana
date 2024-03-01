@@ -48,3 +48,5 @@ pl:
         one: prawie 1 rok
         few: prawie %{count} lata
         other: prawie %{count} lat
+  activerecord:
+    errors: "Napraw %{count} błąd przed zapisaniem %{model}"

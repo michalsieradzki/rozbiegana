@@ -8,6 +8,10 @@ class Activity < ApplicationRecord
 
   validates :distance, presence: true, numericality: { greater_than_or_equal_to: 5 }
 
+  validate :distance_in_competition
+
+
+
   validates :description, presence: true
   validates :hours, presence: true
   validates :minutes, presence: true
@@ -36,7 +40,11 @@ class Activity < ApplicationRecord
   end
   
   private
-  
+  def distance_in_competition
+    if competition && distance > 10.0
+      errors.add(:distance, "Dystans na oficjalnym treningu nie może być większy niż 10 kilometrów.")
+    end
+  end
   def destroy_associated_notifications
     notifications.destroy_all
   end
