@@ -60,27 +60,29 @@
             br
         
       - if activity.user == current_user
-        li.list-group-item
-          .d-flex.flex-row
-            = link_to "Edytuj aktywność", edit_activity_path(activity), class: "btn btn-outline-success mx-2"
+        li.list-group-item.px-0
+          .d-flex.flex-row.justify-content-between
+            = link_to "Edytuj aktywność", edit_activity_path(activity), class: "btn btn-outline-success"
             = link_to "Usuń aktywność", activity, data: { turbo_method: :delete, turbo_confirm: "Czy napewno usunąć aktywność?" }, class: "btn btn-outline-danger mx-2" 
 
     a.btn.btn-success.btn-sm.w-100 data-bs-toggle="collapse" href="#collapseExample#{activity.id}" role="button" aria-expanded="false" aria-controls="collapseExample"
-      | ↓ Komentarze ↓ (#{activity.comments.count})
+      | ↓ Komentarze ↓ (#{activity.comments.visible.count})
 
     div.collapse id="collapseExample#{activity.id}"
-      - activity.comments.each do |comment|
-        div.card.m-1.d-flex.flex-row.align-items-center
-          div.card-body.d-flex.flex-column.justify-content-start.p-1.my-1
+      - activity.comments.visible.each do |comment|
+        div.m-1.d-flex.flex-row.align-items-center
+          div.d-flex.flex-column.justify-content-start.p-1.my-1.w-100
             div
+              
               small
                 strong = "#{comment.user.username}:"
             = " #{comment.content}"
+            hr
           - if comment.user == current_user
             = button_to comment_path(comment), method: :delete, class: "btn btn-sm btn-outline-danger mx-3", form: { data: {turbo_confirm: "Czy napewno usunąć komentarz?"} } do 
               i.bi.bi-trash
 
-      div.card.m-1.w-75
+      div.card.m-1.w-100
         = render 'comments/form', comment: @comment, activity: activity || @activity
   .modal.fade[id="likesmodal#{activity.id}" tabindex="-1" aria-labelledby="likesModalLabel" aria-hidden="true"]
     .modal-dialog.modal-dialog-centered

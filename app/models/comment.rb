@@ -7,6 +7,8 @@ class Comment < ApplicationRecord
   before_destroy :cleanup_notifications
   has_noticed_notifications model_name: 'Notification'
 
+  scope :visible, -> { where(hide: false) }
+
   private
 
   def notify_recipient

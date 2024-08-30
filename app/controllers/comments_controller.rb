@@ -1,5 +1,5 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, only: %i[ show edit update destroy ]
+  before_action :set_comment, only: %i[ show edit destroy ]
 
   # GET /comments or /comments.json
   def index
@@ -22,7 +22,6 @@ class CommentsController < ApplicationController
   # POST /comments or /comments.json
   def create
     @comment = Comment.new(comment_params)
-
     respond_to do |format|
       if @comment.save
         format.html { redirect_to root_path, notice: "Dodano komentarz." }
@@ -36,7 +35,7 @@ class CommentsController < ApplicationController
 
   # DELETE /comments/1 or /comments/1.json
   def destroy
-    @comment.destroy
+    @comment.update_column(:hide, true)
 
     respond_to do |format|
       format.html { redirect_to root_path, notice: "Komentarz został usunięty." }

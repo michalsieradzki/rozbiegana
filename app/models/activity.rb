@@ -26,19 +26,22 @@ class Activity < ApplicationRecord
   end
 
   def calculate_score
-    if user.team == "niesklasyfikowany"
-      0
-    elsif competition
-       distance.floor * 5
-    elsif  pace < 301
-     distance.floor * 3
-    elsif pace >= 301 && pace < 360
-     distance.floor * 2
-    else 
-     distance.floor
+    return 0 if user.team == "niesklasyfikowany"
+
+    if competition
+      distance.floor * 5
+    else
+      base_score = case pace
+                   when 0...300 then distance.floor * 3
+                   when 300...330 then distance.floor * 2.5
+                   when 330...360 then distance.floor * 2
+                   when 360...390 then distance.floor * 1.5
+                   else distance.floor * 1
+                   end
+      base_score
     end
   end
-  
+
   private
   def distance_in_competition
     if competition && distance > 10.0

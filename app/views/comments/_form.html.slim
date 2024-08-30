@@ -1,5 +1,5 @@
-= form_with(model: comment) do |form|
-  - activity = activity || @activity
+= form_with model: comment, url: comments_path, method: :post, local: true do |form|
+  - activity = activity || @activity 
   - if comment.errors.any?
     div[style="color: red"]
       h2
@@ -11,6 +11,7 @@
             = error.full_message
   = form.hidden_field :user_id, value: current_user.id
   = form.hidden_field :activity_id, value: activity.id
-  .input-group
+  
+  .input-group.w-100
     = form.text_area :content, placeholder: "Skomentuj... ", class: "form-control", required: true
     = form.submit "➣ Wyślij", class: "btn btn-success"

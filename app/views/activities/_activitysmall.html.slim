@@ -1,34 +1,34 @@
-.m-2.w-50 id="#{dom_id(activity)}"
-.card.h-25.w-50
-  .card-body
-    p.card-title
-      strong
-        = activity.user.username
-      |  dodał(a) aktywność 
-      = time_ago_in_words(activity.created_at)
-      |  temu 
-    h5.card-title
-      | Dystans: 
-      = activity.distance
-    p.card-text
-      = activity.description
-  ul.list-group.list-group-flush
-    li.list-group-item
-      | Czas: 
-      = activity.hours
-      | :
-      = activity.minutes
-      | :
-      = activity.seconds
-    li.list-group-item
-      | Średnie tempo: 
-      = calculate_pace(activity.hours, activity.minutes, activity.seconds, activity.distance)
-    li.list-group-item
-      | Zawody: 
-      - if activity.competition == true
-        |  TAK! 
-      - else
-        |  NIE 
-  .card-body
-    = link_to "Pokaz szczegóły", activity_path(activity), class: "btn btn-success m-1"
-    = link_to "Edytuj", edit_activity_path(activity), class: "btn btn-success m-1"
+.m-2.d-flex id="#{dom_id(activity)}"
+  .card.w-100
+    .card-body
+      p.card-title
+        strong
+          = activity.user.username
+        |  dodał(a) aktywność 
+        = time_ago_in_words(activity.created_at)
+        |  temu 
+      h5.card-title
+        | Dystans: 
+        = activity.distance
+      p.card-text
+        = activity.description
+    ul.list-group.list-group-flush
+      li.list-group-item
+        | Czas: 
+        = activity.hours
+        | :
+        = activity.minutes
+        | :
+        = activity.seconds
+      li.list-group-item
+        | Średnie tempo: 
+        = calculate_pace(activity.hours, activity.minutes, activity.seconds, activity.distance)
+      li.list-group-item
+        | Zawody: 
+        - if activity.competition == true
+          |  TAK! 
+        - else
+          |  NIE 
+    .card-body
+      = link_to "Pokaz szczegóły", activity_path(activity), class: "btn btn-success m-1"
+      = link_to "Edytuj", edit_activity_path(activity), class: "btn btn-success m-1"

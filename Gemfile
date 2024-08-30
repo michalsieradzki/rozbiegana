@@ -21,6 +21,7 @@ gem "sassc-rails"
 gem "sprockets-rails"
 gem "puma", ">= 5.0"
 gem 'rails-i18n'
+gem 'simple_form'
 gem 'slim', '~> 5.1', '>= 5.1.1'
 gem 'slim-rails', '~> 3.6', '>= 3.6.2'
 gem "stimulus-rails"

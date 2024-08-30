@@ -14,9 +14,24 @@
  *= stub "active_admin"
  *= require_self
  */
+//  $primary: #D8DDEF;
+//  $secondary: #A0A4B8;
+//  $success: #21D19F;
+//  $info: #45B69C;
+//  $danger: #7293A0;
+ $warning: rgb(255, 140, 0);
+//  $light: #D8DDEF;
+//  $dark: #7293A0;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+$font-family-sans-serif: 'Montserrat', sans-serif;
 
- @import "bootstrap";
-
+body{
+  border-color: #D8DDEF !important;
+}
+@import "bootstrap";
+.btn, .card, .navbar-toggler, .badge{
+  border-radius: 0;
+}
  .activity-image{
   width: 100%;
  }
@@ -29,10 +44,4 @@
   background-color: transparent;
   color: red;
   font-size: 2rem;
- }
- .bg-warning{
-  background-color: rgb(255, 140, 0) !important;
- }
- .text-warning{
-  color: rgb(255, 140, 0) !important;
  }
