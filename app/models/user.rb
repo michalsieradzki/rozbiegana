@@ -7,9 +7,10 @@ class User < ApplicationRecord
   has_many :activities
   has_many :comments
   has_many :likes
+  has_many :messages
   has_many :notifications, as: :recipient, dependent: :destroy
   has_one_attached :image
-  
+
   def self.ransackable_attributes(auth_object = nil)
     super + _ransack_aliases.keys + _ransackers.keys
   end

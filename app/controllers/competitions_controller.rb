@@ -9,8 +9,8 @@ class CompetitionsController < ApplicationController
 
     @teams = Team.all
 
-    @green_score = Activity.joins(user: :team).where('team_id =? AND DATE_PART(\'month\', activities.created_at) = ?', 3, Date.today.month).sum(:score)
-    @orange_score = Activity.joins(user: :team).where('team_id = ? AND DATE_PART(\'month\', activities.created_at) = ?', 2, Date.today.month).sum(:score)
+    @green_score = Activity.joins(user: :team).where('team_id =? AND DATE_PART(\'month\', activities.created_at) = ?', 2, Date.today.month).sum(:score)
+    @orange_score = Activity.joins(user: :team).where('team_id = ? AND DATE_PART(\'month\', activities.created_at) = ?', 3, Date.today.month).sum(:score)
     @blue_score = Activity.joins(user: :team).where('team_id = ? AND DATE_PART(\'month\', activities.created_at) = ?', 4, Date.today.month).sum(:score)
 
     @green_percent =  percentage(@green_score)

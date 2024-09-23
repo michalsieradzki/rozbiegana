@@ -1,8 +1,22 @@
 h1.d-flex.justify-content-center
   | Aktywności
+.btn.btn-outline-success.m-2.py-3.w-75 type="button" data-bs-toggle="offcanvas" data-bs-target="#chatOffcanvas" aria-controls="chatOffcanvas"
+  | Zajrzyj do Chatu
 .d-flex.justify-content-center
   = link_to "Dodaj aktywność", new_activity_path, class: "btn btn-success m-2 py-3 w-100"
 #activities.d-flex.flex-wrap
   - @activities.each do |activity|
     = render activity
+
+.offcanvas.offcanvas-end#chatOffcanvas tabindex="-1" aria-labelledby="chatOffcanvasLabel" data-controller="chat"
+  .offcanvas-header
+    h5#chatOffcanvasLabel.offcanvas-title Live Chat
+    button.btn-close type="button" data-bs-dismiss="offcanvas" aria-label="Close"
+  .offcanvas-body
+    = turbo_stream_from "chat"
+    = turbo_frame_tag "chat_messages", class: "d-flex flex-column-reverse overflow-auto", style: "height: 95vh;", data: { chat_target: "messages" } do
+      = render @messages
+
+  = render partial: "messages/form", locals: { message: @message }
+
 

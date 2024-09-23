@@ -1,0 +1,17 @@
+= turbo_frame_tag dom_id(message) do
+  -if message.user == current_user
+    .d-flex.justify-content-end
+      .card.mb-1.w-75.bg-primary.text-light
+        .card-body
+          .d-flex.justify-content-between
+            strong = message.user.username
+            small = message.created_at.strftime("%H:%M")
+          p.mb-0 = message.content
+  -else
+    .d-flex.justify-content-start
+      .card.mb-1.w-75
+        .card-body
+          .d-flex.justify-content-between
+            strong = message.user.username
+            small = message.created_at.strftime("%H:%M")
+          p.mb-0 = message.content

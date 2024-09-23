@@ -8,7 +8,7 @@ class Activity < ApplicationRecord
 
   validates :distance, presence: true, numericality: { greater_than_or_equal_to: 5 }
 
-  validate :distance_in_competition
+  # validate :distance_in_competition
 
 
 

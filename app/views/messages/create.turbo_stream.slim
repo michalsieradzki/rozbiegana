@@ -1,0 +1,4 @@
+= turbo_stream.prepend "chat_messages" do
+  = render partial: "messages/message", locals: { message: @message }
+= turbo_stream.replace "new_message" do
+  = render partial: "messages/form", locals: { message: Message.new }

@@ -5,6 +5,8 @@ class ActivitiesController < ApplicationController
   def index
     @activities = Activity.all.order(created_at: :desc).limit(20)
     @comment = Comment.new
+    @messages = Message.all.order(created_at: :desc).limit(20)
+    @message = Message.new
   end
 
   # GET /activities/1 or /activities/1.json
@@ -31,8 +33,8 @@ class ActivitiesController < ApplicationController
   end
   def top
     @month_names = ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"]
-    if params[:month] 
-      @month = @month_names.find_index(params[:month]).to_i + 1 
+    if params[:month]
+      @month = @month_names.find_index(params[:month]).to_i + 1
     else
       @month = Time.now.month
     end
@@ -58,12 +60,12 @@ class ActivitiesController < ApplicationController
 
   def set_month
     @month = params[:month]
-    
+
   end
   # POST /activities or /activities.json
   def create
     @activity = Activity.new(activity_params)
-    @activity.score = @activity.calculate_score 
+    @activity.score = @activity.calculate_score
     respond_to do |format|
       if @activity.save
         format.html { redirect_to root_path, notice: "Aktywność dodana pomyślnie." }
@@ -94,7 +96,7 @@ class ActivitiesController < ApplicationController
 
   # DELETE /activities/1 or /activities/1.json
   def destroy
-    
+
     @activity.destroy
 
     respond_to do |format|

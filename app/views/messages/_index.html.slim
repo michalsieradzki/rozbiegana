@@ -1,0 +1,10 @@
+.offcanvas.offcanvas-end#chatOffcanvas tabindex="-1" aria-labelledby="chatOffcanvasLabel" data-controller="chat"
+  .offcanvas-header
+    h5#chatOffcanvasLabel.offcanvas-title Live Chat
+    button.btn-close type="button" data-bs-dismiss="offcanvas" aria-label="Close"
+  .offcanvas-body
+    = turbo_stream_from "chat"
+    = turbo_frame_tag "chat_messages", class: "d-flex flex-column-reverse overflow-auto", data: { chat_target: "messages" } do
+      = render @messages
+
+  = render partial: "messages/form", locals: { message: @message }
