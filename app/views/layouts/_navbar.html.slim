@@ -1,43 +1,65 @@
-nav.navbar.navbar-expand-lg.navbar-light.bg-light
-  .container-fluid.d-flex.justify-content-around.mt-3
+nav.navbar.navbar-expand-lg.fixed-top
+  .container-fluid
     = render 'layouts/notifications'
-    = link_to root_path do
-      = image_tag 'logo-without-bg.png', size: "150x75", class: "jusify-content-start"
-    div
-      button.navbar-toggler[type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"]
-        span.navbar-toggler-icon
+    
+    = link_to root_path, class: "navbar-brand" do
+      = image_tag 'logo-without-bg.png', size: "120x60", alt: "Rozbiegana"
+    
+    button.navbar-toggler[type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"]
+      span.navbar-toggler-icon
+
     #navbarSupportedContent.collapse.navbar-collapse
       - if signed_in?
-        ul.navbar-nav.d-flex.align-items-center.justify-content-center.w-100
-          li.nav-item.p-3
-            = link_to 'Home', root_path, class: "nav-link active"
-          li.nav-item.p-3
-            = link_to "TOP", '/top', class: "nav-link active"
-          li.nav-item.p-3
-            = link_to "Konkurs", '/konkurs', class: "nav-link active"
-          li.nav-item.dropdown
-            a#navbarDropdown.nav-link.dropdown-toggle.active[href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"]
+        ul.navbar-nav.mx-auto.mb-2.mb-lg-0
+          li.nav-item.mx-2
+            = link_to root_path, class: "nav-link #{'active' if current_page?(root_path)}" do
+              i.bi.bi-house.me-1
+              | Home
+          li.nav-item.mx-2
+            = link_to '/top', class: "nav-link #{'active' if current_page?('/top')}" do
+              i.bi.bi-trophy.me-1
+              | TOP
+          li.nav-item.mx-2
+            = link_to '/konkurs', class: "nav-link #{'active' if current_page?('/konkurs')}" do
+              i.bi.bi-award.me-1
+              | Konkurs
+          li.nav-item.dropdown.mx-2
+            a#navbarDropdown.nav-link.dropdown-toggle[href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"]
+              i.bi.bi-person-circle.me-1
               |  Mój profil 
-            ul.dropdown-menu.p-3[aria-labelledby="navbarDropdown"]
+            ul.dropdown-menu.shadow[aria-labelledby="navbarDropdown"]
               li
-                = link_to "Dodaj aktywność", new_activity_path, class: "dropdown-item p-3"
+                = link_to new_activity_path, class: "dropdown-item" do
+                  i.bi.bi-plus-circle.me-2
+                  | Dodaj aktywność
               li
-                = link_to 'Moje treningi', '/myactive', class: "dropdown-item p-3"
+                = link_to '/myactive', class: "dropdown-item" do
+                  i.bi.bi-list-task.me-2
+                  | Moje treningi
               li
-                = link_to "Edytuj profil", edit_user_registration_path, class: "dropdown-item p-3"
+                = link_to edit_user_registration_path, class: "dropdown-item" do
+                  i.bi.bi-gear.me-2
+                  | Edytuj profil
               li
                 hr.dropdown-divider
-              li.d-flex.justify-content-center
-                = button_to 'Wyloguj', destroy_user_session_path, method: :delete, data: { turbo: "false" }, class: "btn btn-outline-danger btn-sm"
-          li.nav-item.p-3
-            - activities = Activity.where(created_at: Time.now.beginning_of_month..Time.now.end_of_month)
-            span.nav-link[href="#"]
-              | W tym miesiącu nabiegaliśmy wspólnie już 
-              = activities.sum(:distance).round(2)
-              |  km!
+              li.text-center
+                = button_to destroy_user_session_path, method: :delete, data: { turbo: "false" }, class: "btn btn-outline-danger btn-sm" do
+                  i.bi.bi-box-arrow-right.me-1
+                  | Wyloguj
+        
+        .d-flex.align-items-center
+          - activities = Activity.where(created_at: Time.now.beginning_of_month..Time.now.end_of_month)
+          .badge.bg-success.fs-6.px-3.py-2
+            i.bi.bi-speedometer.me-1
+            = activities.sum(:distance).round(2)
+            |  km w tym miesiącu!
       - else
-        ul.navbar-nav.me-auto.mb-2.mb-lg-0
-          li.nav-item.p-3
-            = link_to "Zaloguj się", new_user_session_path, class: "nav-link"
-          li.nav-item.p-3
-            = link_to "Zarejestruj się", new_user_registration_path, class: "nav-link"
+        ul.navbar-nav.ms-auto
+          li.nav-item.mx-2
+            = link_to new_user_session_path, class: "nav-link" do
+              i.bi.bi-box-arrow-in-right.me-1
+              | Zaloguj się
+          li.nav-item.mx-2
+            = link_to new_user_registration_path, class: "btn btn-success" do
+              i.bi.bi-person-plus.me-1
+              | Zarejestruj się

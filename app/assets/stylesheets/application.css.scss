@@ -14,34 +14,278 @@
  *= stub "active_admin"
  *= require_self
  */
-//  $primary: #D8DDEF;
-//  $secondary: #A0A4B8;
-//  $success: #21D19F;
-//  $info: #45B69C;
-//  $danger: #7293A0;
- $warning: rgb(255, 140, 0);
-//  $light: #D8DDEF;
-//  $dark: #7293A0;
+
+// Kolory dla drużyn
+$team-green: #28a745;
+$team-orange: #fd7e14;
+$team-blue: #007bff;
+
+// Niestandardowe kolory Bootstrap
+$success: #21D19F;
+$warning: rgb(255, 140, 0);
+$primary: #4a90e2;
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 $font-family-sans-serif: 'Montserrat', sans-serif;
 
-body{
-  border-color: #D8DDEF !important;
+body {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
 }
+
 @import "bootstrap";
-.btn, .card, .navbar-toggler, .badge{
-  border-radius: 0;
+
+// Ładniejsze zaokrąglenia
+.btn, .card, .navbar-toggler, .badge {
+  border-radius: 15px !important;
 }
- .activity-image{
+
+.form-control, .form-select {
+  border-radius: 10px !important;
+}
+
+// Navbar z gradientem
+.navbar {
+  background: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(248,249,250,0.95) 100%) !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+  border-bottom: none !important;
+}
+
+.navbar-brand img {
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// Karty aktywności
+.activity-card {
+  background: white;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  border: none !important;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $team-green, $team-orange, $team-blue);
+  }
+}
+
+.activity-image {
   width: 100%;
- }
- .activity-card{
-  padding-bottom: 15px;
-  border-bottom: 1px green solid;
- }
- .heart{
+  border-radius: 15px;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+// Badges dla drużyn
+.team-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: bold;
+  color: white;
+  font-size: 0.875rem;
+  margin: 0.25rem 0;
+  
+  &.team-green {
+    background: linear-gradient(45deg, $team-green, lighten($team-green, 10%));
+  }
+  
+  &.team-orange {
+    background: linear-gradient(45deg, $team-orange, lighten($team-orange, 10%));
+  }
+  
+  &.team-blue {
+    background: linear-gradient(45deg, $team-blue, lighten($team-blue, 10%));
+  }
+  
+  &.team-default {
+    background: linear-gradient(45deg, #6c757d, lighten(#6c757d, 10%));
+  }
+}
+
+// Przyciski z gradientami
+.btn-success {
+  background: linear-gradient(45deg, $success, lighten($success, 10%));
+  border: none;
+  box-shadow: 0 4px 16px rgba($success, 0.3);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba($success, 0.4);
+  }
+}
+
+.btn-outline-success {
+  border: 2px solid $success;
+  color: $success;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: $success;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba($success, 0.3);
+  }
+}
+
+// Tabele z ładniejszym stylem
+.table {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  
+  thead th {
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.5px;
+  }
+  
+  tbody tr {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: rgba($primary, 0.05);
+      transform: scale(1.01);
+    }
+  }
+}
+
+// Serduszko z animacją
+.heart {
   border: none;
   background-color: transparent;
-  color: red;
-  font-size: 2rem;
- }
+  color: #e74c3c;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.2);
+    color: #c0392b;
+  }
+  
+  &.liked {
+    animation: heartbeat 0.6s ease-in-out;
+  }
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+// Kontener główny z ładniejszym paddingiem
+.container {
+  padding-top: 2rem;
+}
+
+// Alerty z ładniejszym stylem
+.alert {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+// Chat button z pulsowaniem
+.chat-toggle {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 12px;
+    height: 12px;
+    background: #e74c3c;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+  }
+}
+
+// Responsive improvements
+@media (max-width: 768px) {
+  .activity-card {
+    margin: 1rem 0;
+    padding: 1rem;
+  }
+  
+  .navbar-nav {
+    text-align: center;
+  }
+  
+  .table-responsive {
+    border-radius: 15px;
+  }
+}
+
+// Distance display z większą czcionką
+.distance-display {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, $primary, $success);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+// Progress bars dla konkursów
+.team-progress {
+  height: 60px;
+  border-radius: 30px;
+  position: relative;
+  overflow: hidden;
+  margin: 1rem 0;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    transition: width 0.8s ease;
+  }
+}

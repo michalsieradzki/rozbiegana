@@ -1,4 +1,4 @@
-.my-4.w-100.activity-card  id="#{dom_id(activity)}"
+.my-4.w-100.activity-card id="#{dom_id(activity)}"
   - if activity.image.attached?
     = image_tag activity.image, class: "activity-image"
     .modal.fade[tabindex="-1" id="pictureModal#{activity.id}" aria-labelledby="exampleModalLabel" aria-hidden="true"]
@@ -6,7 +6,7 @@
         button.btn-close[type="button" data-bs-dismiss="modal" aria-label="Close"]
       .modal-dialog.modal-fullscreen
         .modal-content
-          =image_tag activity.image
+          = image_tag activity.image
   .activity-aside
     .font-weight-light
       strong
@@ -33,26 +33,26 @@
         = calculate_pace(activity.hours, activity.minutes, activity.seconds, activity.distance)
       li.list-group-item
 
-          -if activity.user.team.name == "Zieloni"
+          - if activity.user.team.name == "Zieloni"
             | Punkty dla drużyny: 
             h5.text-success
               = activity.user.team.name
               |  +  
               = activity.score
               br
-          -elsif activity.user.team.name == "Pomarańczowi"
+          - elsif activity.user.team.name == "Pomarańczowi"
             h5.text-warning
               = activity.user.team.name
               |  +  
               = activity.score
               br
-          -elsif activity.user.team.name == "Niebiescy"
+          - elsif activity.user.team.name == "Niebiescy"
             h5.text-primary
               = activity.user.team.name
               |  +  
               = activity.score
               br
-          -else
+          - else
             h5.text-secondary
               = activity.user.team.name
               |  +  

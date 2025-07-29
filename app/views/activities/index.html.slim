@@ -1,17 +1,29 @@
-h1.d-flex.justify-content-center
-  | Aktywności
-.btn.btn-outline-success.m-2.py-3.w-75 type="button" data-bs-toggle="offcanvas" data-bs-target="#chatOffcanvas" aria-controls="chatOffcanvas"
-  | Zajrzyj do Chatu
-.d-flex.justify-content-center
-  = link_to "Dodaj aktywność", new_activity_path, class: "btn btn-success m-2 py-3 w-100"
-#activities.d-flex.flex-wrap
+.text-center.mb-4
+  h1.display-4.mb-4
+    i.bi.bi-activity.me-3
+    | Aktywności
+  
+  .row.g-3.mb-4
+    .col-md-6
+      button.btn.btn-outline-success.btn-lg.w-100.chat-toggle type="button" data-bs-toggle="offcanvas" data-bs-target="#chatOffcanvas" aria-controls="chatOffcanvas"
+        i.bi.bi-chat-dots.me-2
+        | Zajrzyj do Chatu
+    .col-md-6
+      = link_to new_activity_path, class: "btn btn-success btn-lg w-100" do
+        i.bi.bi-plus-circle.me-2
+        | Dodaj aktywność
+
+#activities
   - @activities.each do |activity|
     = render activity
 
+// Chat offcanvas (bez większych zmian, tylko ikony)
 .offcanvas.offcanvas-end#chatOffcanvas tabindex="-1" aria-labelledby="chatOffcanvasLabel" data-controller="chat"
-  .offcanvas-header
-    h5#chatOffcanvasLabel.offcanvas-title Live Chat
-    button.btn-close type="button" data-bs-dismiss="offcanvas" aria-label="Close"
+  .offcanvas-header.bg-primary.text-white
+    h5#chatOffcanvasLabel.offcanvas-title
+      i.bi.bi-chat-heart.me-2
+      | Live Chat
+    button.btn-close.btn-close-white type="button" data-bs-dismiss="offcanvas" aria-label="Close"
   .offcanvas-body
     = turbo_stream_from "chat"
     = turbo_frame_tag "chat_messages", class: "d-flex flex-column-reverse overflow-auto", style: "height: 95vh;", data: { chat_target: "messages" } do
