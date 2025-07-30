@@ -112,4 +112,16 @@ Rails.application.configure do
   # ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # Ustawienia URL z portem
+  config.action_controller.default_url_options = { 
+    host: 'srv29.mikr.us', 
+    port: 20168 
+  }
+
+  config.action_mailer.default_url_options = { 
+    protocol: 'http', 
+    host: 'srv29.mikr.us', 
+    port: 20168 
+  }
 end
