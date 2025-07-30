@@ -79,6 +79,8 @@ test:
 #
 production:
   <<: *default
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  port: <%= ENV.fetch("DATABASE_PORT", "5432") %>
   database: rozbiegana24_production
   username: rozbiegana24
   password: <%= ENV["ROZBIEGANA24_DATABASE_PASSWORD"] %>

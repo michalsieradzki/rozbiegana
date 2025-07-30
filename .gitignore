@@ -37,3 +37,16 @@ production.env
 deploy.sh
 quick_restart.sh
 *.backup
+# Production secrets
+production.env
+*.env
+config/credentials/*.key
+config/master.key
+# Deployment scripts
+deploy.sh
+quick_restart.sh
+# Logs and cache
+log/*.log
+tmp/*
+storage/*
+*.backup

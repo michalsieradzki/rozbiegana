@@ -45,10 +45,10 @@ Rails.application.configure do
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
-  # config.assume_ssl = true
+  # # config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  config.force_ssl = false
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
@@ -124,4 +124,17 @@ Rails.application.configure do
     host: 'srv29.mikr.us', 
     port: 20168 
   }
+
+  # Ustawienia URL z portem dla linków
+  config.action_controller.default_url_options = { 
+    host: "srv29.mikr.us", 
+    port: 20168 
+  }
+
+  config.action_mailer.default_url_options = { 
+    protocol: "http", 
+    host: "srv29.mikr.us", 
+    port: 20168 
+  }
 end
+
