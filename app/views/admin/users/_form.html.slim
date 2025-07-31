@@ -1,0 +1,59 @@
+= form_with model: [:admin, user], class: "row g-3" do |f|
+  - if user.errors.any?
+    .col-12
+      .alert.alert-danger
+        h6 Znaleziono błędy:
+        ul.mb-0
+          - user.errors.full_messages.each do |error|
+            li = error
+
+  .col-md-6
+    = f.label :username, "Nazwa użytkownika", class: "form-label"
+    = f.text_field :username, class: "form-control", placeholder: "np. jan_kowalski"
+
+  .col-md-6
+    = f.label :email, "Email", class: "form-label"
+    = f.email_field :email, class: "form-control", placeholder: "jan@example.com"
+
+  .col-md-6
+    = f.label :team_id, "Drużyna", class: "form-label"
+    = f.select :team_id, options_from_collection_for_select(Team.all, :id, :name, user.team_id), { prompt: 'Wybierz drużynę...' }, { class: "form-select" }
+
+  .col-md-6
+    .form-check.form-switch.mt-4
+      = f.check_box :admin, class: "form-check-input"
+      = f.label :admin, "Uprawnienia administratora", class: "form-check-label"
+      .form-text Nadaj użytkownikowi uprawnienia administratora
+
+  - unless user.new_record?
+    .col-12
+      .alert.alert-info
+        i.bi.bi-info-circle.me-2
+        strong Informacje:
+        br
+        | Data rejestracji: #{user.created_at.strftime('%d.%m.%Y %H:%M')}
+        br
+        | Aktywności: #{user.activities.count}
+        br
+        | Łączne punkty: #{user.activities.sum(:score)}
+        - if user.deleted?
+          br
+          span.text-danger
+            strong Status: USUNIĘTY (#{user.deleted_at.strftime('%d.%m.%Y %H:%M')})
+
+  .col-md-6
+    = f.label :password, user.new_record? ? "Hasło" : "Nowe hasło (zostaw puste jeśli nie zmieniasz)", class: "form-label"
+    = f.password_field :password, class: "form-control", placeholder: user.new_record? ? "Minimum 6 znaków" : "Nowe hasło..."
+
+  - if user.new_record?
+    .col-12
+      .alert.alert-warning
+        i.bi.bi-info-circle.me-2
+        strong Uwaga: 
+        | Użytkownik zostanie utworzony z podanym hasłem. Poinformuj go o danych logowania.
+
+  .col-12.d-flex.gap-2
+    = f.submit user.persisted? ? "Aktualizuj użytkownika" : "Utwórz użytkownika", class: "btn btn-success"
+    = link_to "Anuluj", admin_users_path, class: "btn btn-secondary"
+    - if user.persisted?
+      = link_to "Pokaż", admin_user_path(user), class: "btn btn-outline-primary"

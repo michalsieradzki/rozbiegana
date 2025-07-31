@@ -1,0 +1,53 @@
+.d-flex.justify-content-between.align-items-center.mb-4
+  h1
+    i.bi.bi-trophy.me-2
+    | Zarządzanie konkursami
+  = link_to new_admin_competition_path, class: "btn btn-success" do
+    i.bi.bi-plus-circle.me-1
+    | Nowy konkurs
+
+// Szybkie statystyki
+.row.mb-4
+  .col-md-3
+    .card.bg-success.text-white
+      .card-body.text-center
+        h3 = @active_competitions.count
+        small Aktywne konkursy
+  .col-md-3
+    .card.bg-warning.text-dark
+      .card-body.text-center
+        h3 = @upcoming_competitions.count
+        small Nadchodzące
+  .col-md-3
+    .card.bg-info.text-white
+      .card-body.text-center
+        h3 = @finished_competitions.count
+        small Zakończone
+  .col-md-3
+    .card.bg-primary.text-white
+      .card-body.text-center
+        h3 = @competitions.count
+        small Łącznie
+
+= render 'admin/shared/data_table', title: 'Lista konkursów', icon_class: 'bi bi-trophy', items: @competitions, filters: nil, columns: @table_columns, actions: @table_actions
+
+// Prosta paginacja
+- if @competitions.respond_to?(:current_page)
+  .d-flex.justify-content-center.mt-4
+    nav
+      ul.pagination
+        - if @competitions.prev_page
+          li.page-item
+            = link_to admin_competitions_path(page: @competitions.prev_page), class: "page-link" do
+              | « Poprzednia
+        
+        li.page-item.active
+          span.page-link
+            = @competitions.current_page
+            |  / 
+            = @competitions.total_pages
+        
+        - if @competitions.next_page
+          li.page-item
+            = link_to admin_competitions_path(page: @competitions.next_page), class: "page-link" do
+              | Następna »

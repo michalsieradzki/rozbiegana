@@ -1,41 +1,132 @@
-h1 Konkurs
-h2 
-  | Aktualny stan:
-  h1.w-100.text-white.lh-lg.shadow-lg
-    .bg-success.m-1.text-shadow[style="width: #{@green_percent}%"]
-      = @green_score
-    .bg-warning.m-1.text-shadow[style="width: #{@orange_percent}%"]
-      = @orange_score 
-    .bg-primary.m-1.text-shadow[style="width: #{@blue_percent}%"]
-      = @blue_score
-h2 Najlepiej punktujący zawodnicy:
-br
-table.table.table-stripped
-  thead
-    tr
-      th Zawodnik
-      th Punkty
-  tbody
-    - @users.each do |user|
-      tr
-        -if user.team.name == "Zieloni"
-          td.table-success
-            = user.username
-          td.table-success
-            = user.total_score
-        -elsif user.team.name == "Pomarańczowi"
-          td.table-warning
-            = user.username
-          td.table-warning  
-            = user.total_score
-        -elsif user.team.name == "Niebiescy"
-          td.table-primary
-            = user.username
-          td.table-primary
-            = user.total_score
-        -else
-          td
-            = user.username
-          td  
-            = user.total_score
+.container-fluid
+  .row
+    .col-12
+      - if @current_competition
+        .card.mb-4
+          .card-header.bg-primary.text-white
+            h2.mb-0 
+              = @current_competition.name
+              span.badge.bg-light.text-dark.ms-2
+                = @current_competition.competition_type.humanize
+          .card-body
+            p.lead = @current_competition.description
+            .row
+              .col-md-6
+                small.text-muted 
+                  | Okres: #{@current_competition.start_date.strftime('%d.%m.%Y')} - #{@current_competition.end_date.strftime('%d.%m.%Y')}
+              .col-md-6
+                small.text-muted.text-end
+                  - days_left = (@current_competition.end_date - Date.current).to_i
+                  - if days_left > 0
+                    | Zostało #{days_left} dni
+                  - elsif days_left == 0
+                    | Ostatni dzień!
+                  - else
+                    | Konkurs zakończony
+
+      .row
+        .col-md-8
+          .card
+            .card-header
+              h3 🏆 Najlepiej punktujący zawodnicy
+            .card-body
+              - if @users.any?
+                .table-responsive
+                  table.table.table-striped
+                    thead
+                      tr
+                        th #
+                        th Zawodnik
+                        th Drużyna
+                        th Punkty
+                    tbody
+                      - @users.each_with_index do |user, index|
+                        tr class="#{team_row_class(user.team.name)}"
+                          td
+                            - if index < 3
+                              span.badge class="#{medal_class(index)}"
+                                = index + 1
+                            - else
+                              = index + 1
+                          td
+                            strong = user.username
+                          td
+                            span.badge class="#{team_badge_class(user.team.name)}"
+                              = user.team.name
+                          td
+                            strong = user.total_score
+              - else
+                .text-center.text-muted.py-4
+                  | Brak uczestników w tym konkursie
+
+        .col-md-4
+          .card
+            .card-header
+              h3 📊 Punkty drużyn
+            .card-body
+              - total_score = @green_score + @orange_score + @blue_score
+              - if total_score > 0
+                .mb-3
+                  .d-flex.justify-content-between.align-items-center.mb-1
+                    span.text-success
+                      strong Zieloni
+                    span.badge.bg-success
+                      = @green_score
+                  .progress.mb-2[style="height: 20px;"]
+                    .progress-bar.bg-success[style="width: #{@green_percent}%"]
+
+                .mb-3
+                  .d-flex.justify-content-between.align-items-center.mb-1
+                    span.text-warning
+                      strong Pomarańczowi  
+                    span.badge.bg-warning
+                      = @orange_score
+                  .progress.mb-2[style="height: 20px;"]
+                    .progress-bar.bg-warning[style="width: #{@orange_percent}%"]
+
+                .mb-3
+                  .d-flex.justify-content-between.align-items-center.mb-1
+                    span.text-primary
+                      strong Niebiescy
+                    span.badge.bg-primary
+                      = @blue_score
+                  .progress.mb-2[style="height: 20px;"]
+                    .progress-bar.bg-primary[style="width: #{@blue_percent}%"]
+
+                .text-center.mt-3
+                  small.text-muted
+                    | Łącznie: #{total_score} punktów
+              - else
+                .text-center.text-muted.py-4
+                  | Brak punktów w tym konkursie
+
+      // Sekcja innych aktywnych konkursów
+      - other_competitions = Competition.active.where.not(id: @current_competition&.id)
+      - if other_competitions.any?
+        .row.mt-4
+          .col-12
+            .card
+              .card-header
+                h4 🎯 Inne aktywne konkursy
+              .card-body
+                .row
+                  - other_competitions.each do |comp|
+                    .col-md-4.mb-3
+                      .card.border-secondary
+                        .card-body
+                          h6.card-title = comp.name
+                          p.card-text.small = comp.description
+                          span.badge class="#{competition_type_badge(comp.competition_type)}"
+                            = comp.competition_type.humanize
+                          .mt-2
+                            small.text-muted
+                              - days_left = (comp.end_date - Date.current).to_i
+                              = "#{days_left} dni do końca"
+      - else
+        - unless @current_competition
+          .row.mt-4
+            .col-12
+              .alert.alert-info.text-center
+                h4 Brak aktywnych konkursów
+                p Skontaktuj się z administratorem w sprawie uruchomienia nowego konkursu.
 

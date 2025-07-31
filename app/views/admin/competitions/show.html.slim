@@ -1,0 +1,152 @@
+.d-flex.justify-content-between.align-items-center.mb-4
+  h1
+    i.bi.bi-trophy.me-2
+    = @competition.name
+  .btn-group
+    = link_to edit_admin_competition_path(@competition), class: "btn btn-warning" do
+      i.bi.bi-pencil.me-1
+      | Edytuj
+    = link_to statistics_admin_competition_path(@competition), class: "btn btn-info" do
+      i.bi.bi-graph-up.me-1
+      | Statystyki
+    = link_to admin_competitions_path, class: "btn btn-outline-secondary" do
+      i.bi.bi-arrow-left.me-1
+      | Powrót
+
+.row
+  .col-md-8
+    .card.mb-4
+      .card-header
+        h5.mb-0
+          i.bi.bi-info-circle.me-2
+          | Szczegóły konkursu
+      .card-body
+        .row
+          .col-md-6
+            strong Typ konkursu:
+            br
+            span.badge class="#{competition_type_badge_class(@competition)} fs-6"
+              = @competition.competition_type.humanize
+          .col-md-6
+            strong Status:
+            br
+            span.badge class="#{competition_status_badge_class(@competition)} fs-6"
+              = competition_status(@competition)
+        
+        hr
+        
+        .row
+          .col-md-6
+            strong Data rozpoczęcia:
+            br
+            = @competition.start_date.strftime('%d.%m.%Y')
+          .col-md-6
+            strong Data zakończenia:
+            br
+            = @competition.end_date.strftime('%d.%m.%Y')
+        
+        hr
+        
+        - if @competition.description.present?
+          strong Opis:
+          p.mt-2 = simple_format(@competition.description)
+        
+        - if @competition.rules.present?
+          strong Dodatkowe zasady:
+          pre.bg-light.p-2.mt-2 = JSON.pretty_generate(JSON.parse(@competition.rules))
+
+    .card
+      .card-header
+        h5.mb-0
+          i.bi.bi-people.me-2
+          | Uczestnicy (#{@participants.count})
+      .card-body
+        - if @participants.any?
+          .table-responsive
+            table.table.table-sm
+              thead
+                tr
+                  th Użytkownik
+                  th Drużyna
+                  th Aktywności
+                  th Punkty
+              tbody
+                - @participants.each do |user|
+                  tr
+                    td
+                      = link_to user.username, admin_user_path(user), class: "text-decoration-none"
+                    td
+                      span.badge class="#{team_badge_class(user)}"
+                        = user.team&.name || 'Brak'
+                    td
+                      = user.activities.where(competition: @competition).count
+                    td
+                      strong = user.activities.where(competition: @competition).sum(:score)
+        - else
+          .text-center.text-muted.py-4
+            | Brak uczestników
+
+  .col-md-4
+    .card.mb-4
+      .card-header
+        h5.mb-0
+          i.bi.bi-bar-chart.me-2
+          | Statystyki
+      .card-body
+        .mb-3
+          .d-flex.justify-content-between
+            span Uczestnicy:
+            strong = @competition.participants_count
+        .mb-3
+          .d-flex.justify-content-between
+            span Aktywności:
+            strong = @competition.total_activities_count
+        .mb-3
+          .d-flex.justify-content-between
+            span Średnia punktów:
+            strong = @competition.average_score
+        .mb-3
+          .d-flex.justify-content-between
+            span Mnożnik punktów:
+            strong = "x#{@competition.points_multiplier}"
+        - if @competition.days_remaining > 0
+          .mb-3
+            .d-flex.justify-content-between
+              span Dni pozostało:
+              strong.text-success = @competition.days_remaining
+
+    .card.mb-4
+      .card-header
+        h5.mb-0
+          i.bi.bi-flag.me-2
+          | Punkty drużyn
+      .card-body
+        - @team_scores.each do |team_name, score|
+          .mb-2
+            .d-flex.justify-content-between.align-items-center
+              span.badge class="#{team_name_to_badge_class(team_name.to_s)}"
+                = team_name.to_s.humanize
+              strong = score
+
+    .card
+      .card-header
+        h5.mb-0
+          i.bi.bi-gear.me-2
+          | Akcje
+      .card-body
+        - if @competition.active?
+          = form_with url: deactivate_admin_competition_path(@competition), method: :patch, class: "mb-2", data: { controller: "confirm", action: "submit->confirm#show", confirm_message_value: "Czy dezaktywować ten konkurs? Przestanie być aktywny.", confirm_type_value: "warning" } do |f|
+            = f.button type: "submit", class: "btn btn-outline-warning w-100" do
+              i.bi.bi-pause-circle.me-1
+              | Dezaktywuj konkurs
+        - else
+          = form_with url: activate_admin_competition_path(@competition), method: :patch, class: "mb-2" do |f|
+            = f.button type: "submit", class: "btn btn-success w-100" do
+              i.bi.bi-play-circle.me-1
+              | Aktywuj konkurs
+        
+        - unless @competition.active?
+          = form_with url: admin_competition_path(@competition), method: :delete, data: { controller: "confirm", action: "submit->confirm#show", confirm_message_value: "Czy na pewno usunąć ten konkurs? Ta akcja jest nieodwracalna!", confirm_type_value: "danger" } do |f|
+            = f.button type: "submit", class: "btn btn-danger w-100" do
+              i.bi.bi-trash.me-1
+              | Usuń konkurs

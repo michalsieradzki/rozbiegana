@@ -32,6 +32,15 @@
         | Średnie tempo: 
         = calculate_pace(activity.hours, activity.minutes, activity.seconds, activity.distance)
       li.list-group-item
+        | Konkurs: 
+        - if activity.competition
+          span.badge.bg-info.me-2
+            = activity.competition.name
+          span.text-muted
+            = "(#{activity.competition.competition_type})"
+        - else
+          span.text-muted Brak aktywnego konkursu
+      li.list-group-item
 
           - if activity.user.team.name == "Zieloni"
             | Punkty dla drużyny: 

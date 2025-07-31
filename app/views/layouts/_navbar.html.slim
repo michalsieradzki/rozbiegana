@@ -23,6 +23,13 @@ nav.navbar.navbar-expand-lg.fixed-top
             = link_to '/konkurs', class: "nav-link #{'active' if current_page?('/konkurs')}" do
               i.bi.bi-award.me-1
               | Konkurs
+              - if (current_competition = Competition.current_main_competition)
+                - days_left = (current_competition.end_date - Date.current).to_i
+                - if days_left > 0 && days_left <= 7
+                  span.badge.bg-warning.text-dark.ms-1.small
+                    = "#{days_left}d"
+                - elsif days_left == 0
+                  span.badge.bg-danger.ms-1.small ostatni dzień!
           li.nav-item.dropdown.mx-2
             a#navbarDropdown.nav-link.dropdown-toggle[href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"]
               i.bi.bi-person-circle.me-1
@@ -40,6 +47,13 @@ nav.navbar.navbar-expand-lg.fixed-top
                 = link_to edit_user_registration_path, class: "dropdown-item" do
                   i.bi.bi-gear.me-2
                   | Edytuj profil
+              - if current_user.admin?
+                li
+                  hr.dropdown-divider
+                li
+                  = link_to '/admin', class: "dropdown-item text-danger" do
+                    i.bi.bi-shield-lock.me-2
+                    | Panel Admina
               li
                 hr.dropdown-divider
               li.text-center
@@ -49,10 +63,19 @@ nav.navbar.navbar-expand-lg.fixed-top
         
         .d-flex.align-items-center
           - activities = Activity.where(created_at: Time.now.beginning_of_month..Time.now.end_of_month)
-          .badge.bg-success.fs-6.px-3.py-2
+          .badge.bg-success.fs-6.px-3.py-2.me-2
             i.bi.bi-speedometer.me-1
             = activities.sum(:distance).round(2)
             |  km w tym miesiącu!
+          
+          - if (current_competition = Competition.current_main_competition)
+            .badge.bg-info.fs-6.px-3.py-2
+              i.bi.bi-trophy.me-1
+              = current_competition.name
+              - user_score = current_user.activities.where(competition: current_competition).sum(:score)
+              - if user_score > 0
+                span.ms-1
+                  | (#{user_score}pkt)
       - else
         ul.navbar-nav.ms-auto
           li.nav-item.mx-2

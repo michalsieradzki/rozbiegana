@@ -1,0 +1,27 @@
+.d-flex.justify-content-between.align-items-center.mb-4
+  h1
+    i.bi.bi-activity.me-2
+    | Zarządzanie aktywnościami
+
+= render 'admin/shared/data_table', title: 'Lista aktywności', icon_class: 'bi bi-activity', items: @activities, filters: @table_filters, columns: @table_columns, actions: @table_actions
+
+// Prosta paginacja
+- if @activities.respond_to?(:current_page)
+  .d-flex.justify-content-center.mt-4
+    nav
+      ul.pagination
+        - if @activities.prev_page
+          li.page-item
+            = link_to admin_activities_path(page: @activities.prev_page), class: "page-link" do
+              | « Poprzednia
+        
+        li.page-item.active
+          span.page-link
+            = @activities.current_page
+            |  / 
+            = @activities.total_pages
+        
+        - if @activities.next_page
+          li.page-item
+            = link_to admin_activities_path(page: @activities.next_page), class: "page-link" do
+              | Następna »

@@ -1,0 +1,56 @@
+// app/views/admin/competitions/_form.html.slim
+= form_with model: [:admin, competition], class: "row g-3" do |f|
+  - if competition.errors.any?
+    .col-12
+      .alert.alert-danger
+        h6 Znaleziono błędy:
+        ul.mb-0
+          - competition.errors.full_messages.each do |error|
+            li = error
+
+  .col-md-6
+    = f.label :name, "Nazwa konkursu", class: "form-label"
+    = f.text_field :name, class: "form-control", placeholder: "np. Konkurs Styczniowy 2025"
+
+  .col-md-6
+    = f.label :competition_type, "Typ konkursu", class: "form-label"
+    = f.select :competition_type, [['Punktowy', 'points'], ['Dystansowy', 'distance'], ['Tempo', 'pace'], ['Regularności', 'regularity']], { prompt: 'Wybierz typ...' }, { class: "form-select" }
+
+  .col-12
+    = f.label :description, "Opis", class: "form-label"
+    = f.text_area :description, class: "form-control", rows: 3, placeholder: "Opisz zasady i cele konkursu..."
+
+  .col-md-6
+    = f.label :start_date, "Data rozpoczęcia", class: "form-label"
+    = f.date_field :start_date, class: "form-control"
+
+  .col-md-6
+    = f.label :end_date, "Data zakończenia", class: "form-label"
+    = f.date_field :end_date, class: "form-control"
+
+  .col-md-6
+    = f.label :points_multiplier, "Mnożnik punktów", class: "form-label"
+    = f.number_field :points_multiplier, step: 0.1, min: 0.1, max: 10, value: competition.points_multiplier || 1.0, class: "form-control"
+    .form-text Wartość 1.0 = standardowe punkty, 2.0 = podwójne punkty
+
+  .col-md-6
+    .form-check.form-switch.mt-4
+      = f.check_box :is_main, class: "form-check-input"
+      = f.label :is_main, "Konkurs główny", class: "form-check-label"
+      .form-text Tylko jeden konkurs może być główny jednocześnie
+
+  .col-md-6
+    .form-check.form-switch.mt-4
+      = f.check_box :is_active, class: "form-check-input"
+      = f.label :is_active, "Aktywny", class: "form-check-label"
+
+  .col-12
+    = f.label :rules, "Dodatkowe zasady (JSON)", class: "form-label"
+    = f.text_area :rules, class: "form-control", rows: 3, placeholder: '{"bonus_weekend": 1.5, "min_distance": 5}'
+    .form-text Opcjonalne: dodatkowe zasady w formacie JSON
+
+  .col-12.d-flex.gap-2
+    = f.submit competition.persisted? ? "Aktualizuj konkurs" : "Utwórz konkurs", class: "btn btn-success"
+    = link_to "Anuluj", admin_competitions_path, class: "btn btn-secondary"
+    - if competition.persisted?
+      = link_to "Pokaż", admin_competition_path(competition), class: "btn btn-outline-primary"

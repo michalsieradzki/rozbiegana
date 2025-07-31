@@ -1,0 +1,67 @@
+.d-flex.justify-content-between.align-items-center.mb-4
+  h1
+    i.bi.bi-graph-up.me-2
+    | Statystyki: #{@competition.name}
+  .btn-group
+    = link_to admin_competition_path(@competition), class: "btn btn-outline-primary" do
+      i.bi.bi-eye.me-1
+      | Pokaż konkurs
+    = link_to admin_competitions_path, class: "btn btn-outline-secondary" do
+      i.bi.bi-arrow-left.me-1
+      | Powrót
+
+.row
+  .col-md-3.mb-4
+    .card.bg-primary.text-white
+      .card-body.text-center
+        h3 = @stats[:participants_count]
+        | Uczestników
+  .col-md-3.mb-4
+    .card.bg-success.text-white
+      .card-body.text-center
+        h3 = @stats[:total_activities]
+        | Aktywności
+  .col-md-3.mb-4
+    .card.bg-info.text-white
+      .card-body.text-center
+        h3 = number_with_precision(@stats[:average_score], precision: 1)
+        | Średnia punktów
+  .col-md-3.mb-4
+    .card.bg-warning.text-dark
+      .card-body.text-center
+        h3 = "#{@stats[:total_distance]} km"
+        | Łączny dystans
+
+.card
+  .card-header
+    h5.mb-0
+      i.bi.bi-trophy.me-2
+      | TOP 10 uczestników
+  .card-body
+    - if @stats[:top_performers].any?
+      .table-responsive
+        table.table.table-striped
+          thead
+            tr
+              th #
+              th Użytkownik
+              th Punkty
+              th Akcje
+          tbody
+            - @stats[:top_performers].each_with_index do |user, index|
+              tr
+                td
+                  - if index < 3
+                    span.badge class="#{['bg-warning text-dark', 'bg-secondary', 'bg-dark'][index]}"
+                      = index + 1
+                  - else
+                    = index + 1
+                td = user.username
+                td
+                  strong = user.total_score
+                td
+                  = link_to admin_user_path(user), class: "btn btn-sm btn-outline-primary" do
+                    i.bi.bi-eye
+    - else
+      .text-center.text-muted.py-4
+        | Brak danych

@@ -1,0 +1,15 @@
+.d-flex.justify-content-between.align-items-center.mb-4
+  h1
+    i.bi.bi-pencil.me-2
+    | Edytuj konkurs: #{@competition.name}
+  .btn-group
+    = link_to admin_competition_path(@competition), class: "btn btn-outline-primary" do
+      i.bi.bi-eye.me-1
+      | Pokaż
+    = link_to admin_competitions_path, class: "btn btn-outline-secondary" do
+      i.bi.bi-arrow-left.me-1
+      | Powrót
+
+.card
+  .card-body
+    = render 'form', competition: @competition

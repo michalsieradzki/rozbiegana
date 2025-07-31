@@ -1,0 +1,157 @@
+.row
+  .col-12
+    h1.mb-4
+      | 📊 Dashboard Administratora
+      
+.row.mb-4
+  .col-md-3.mb-3
+    .card.bg-primary.text-white
+      .card-body
+        .d-flex.justify-content-between
+          div
+            h5.card-title Użytkownicy
+            h2 = @stats[:users_count]
+          .align-self-center
+            i.bi.bi-people.fs-1
+        small = "+#{@stats[:users_this_month]} w tym miesiącu"
+  
+  .col-md-3.mb-3
+    .card.bg-success.text-white
+      .card-body
+        .d-flex.justify-content-between
+          div
+            h5.card-title Aktywności
+            h2 = @stats[:activities_count]
+          .align-self-center
+            i.bi.bi-activity.fs-1
+        small = "+#{@stats[:activities_this_month]} w tym miesiącu"
+  
+  .col-md-3.mb-3
+    .card.bg-warning.text-white
+      .card-body
+        .d-flex.justify-content-between
+          div
+            h5.card-title Konkursy
+            h2 = @stats[:competitions_count]
+          .align-self-center
+            i.bi.bi-trophy.fs-1
+        small = "#{@stats[:active_competitions]} aktywnych"
+  
+  .col-md-3.mb-3
+    .card.bg-info.text-white
+      .card-body
+        .d-flex.justify-content-between
+          div
+            h5.card-title Zespoły
+            h2 = @stats[:teams_count]
+          .align-self-center
+            i.bi.bi-flag.fs-1
+
+  .col-md-3.mb-3
+    .card.bg-danger.text-white
+      .card-body
+        .d-flex.justify-content-between
+          div
+            h5.card-title Usunięci
+            h2 = @stats[:deleted_users_count]
+          .align-self-center
+            i.bi.bi-person-x.fs-1
+      small 
+        = link_to admin_users_path(status: 'deleted'), class: "text-white text-decoration-none" do
+          | Zobacz usuniętych »
+
+.row
+  .col-md-8
+    .card
+      .card-header
+        h5
+          i.bi.bi-clock-history.me-2
+          | Ostatnie aktywności
+      .card-body
+        - if @recent_activities.any?
+          .table-responsive
+            table.table.table-hover
+              thead
+                tr
+                  th Użytkownik
+                  th Dystans
+                  th Konkurs
+                  th Data
+                  th Akcje
+              tbody
+                - @recent_activities.each do |activity|
+                  tr
+                    td = activity.user.username
+                    td = "#{activity.distance} km"
+                    td
+                      - if activity.competition
+                        span.badge.bg-primary = activity.competition.name
+                      - else
+                        span.text-muted Brak
+                    td = activity.created_at.strftime('%d.%m %H:%M')
+                    td
+                      = link_to admin_activities_path(activity), class: "btn btn-sm btn-outline-primary" do
+                        i.bi.bi-eye
+        - else
+          .text-center.text-muted.py-4
+            | Brak aktywności
+
+  .col-md-4
+    .card.mb-4
+      .card-header
+        h5
+          i.bi.bi-trophy.me-2
+          | Aktywne konkursy
+      .card-body
+        - if @active_competitions.any?
+          - @active_competitions.each do |competition|
+            .border-bottom.pb-2.mb-2
+              h6 = competition.name
+              small.text-muted = competition.competition_type.humanize
+              .mt-1
+                span.badge.bg-success = "#{competition.days_remaining} dni pozostało"
+        - else
+          .text-center.text-muted.py-4
+            | Brak aktywnych konkursów
+            
+    .card
+      .card-header
+        h5
+          i.bi.bi-award.me-2
+          | TOP użytkownicy (ten miesiąc)
+      .card-body
+        - if @top_users_this_month.any?
+          - @top_users_this_month.each_with_index do |user, index|
+            .d-flex.justify-content-between.border-bottom.pb-1.mb-1
+              span
+                = "#{index + 1}. #{user.username}"
+              span.badge.bg-primary = "#{user.total_score}pkt"
+        - else
+          .text-center.text-muted.py-4
+            | Brak danych
+
+.row.mb-4
+  .col-12
+    .card
+      .card-header
+        h5.mb-0
+          i.bi.bi-lightning.me-2
+          | Szybkie akcje
+      .card-body
+        .row
+          .col-md-3.mb-2
+            = link_to new_admin_user_path, class: "btn btn-outline-primary w-100" do
+              i.bi.bi-person-plus.me-2
+              | Dodaj użytkownika
+          .col-md-3.mb-2
+            = link_to new_admin_competition_path, class: "btn btn-outline-success w-100" do
+              i.bi.bi-plus-circle.me-2
+              | Nowy konkurs
+          .col-md-3.mb-2
+            = link_to admin_users_path(status: 'deleted'), class: "btn btn-outline-danger w-100" do
+              i.bi.bi-person-x.me-2
+              | Usunięci użytkownicy
+          .col-md-3.mb-2
+            = link_to admin_activities_path, class: "btn btn-outline-info w-100" do
+              i.bi.bi-activity.me-2
+              | Wszystkie aktywności

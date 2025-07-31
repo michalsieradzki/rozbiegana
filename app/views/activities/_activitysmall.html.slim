@@ -24,11 +24,12 @@
         | Średnie tempo: 
         = calculate_pace(activity.hours, activity.minutes, activity.seconds, activity.distance)
       li.list-group-item
-        | Zawody: 
-        - if activity.competition == true
-          |  TAK! 
+        | Konkurs: 
+        - if activity.competition
+          span.badge.bg-primary
+            = activity.competition.name
         - else
-          |  NIE 
+          span.text-muted Brak
     .card-body
       = link_to "Pokaz szczegóły", activity_path(activity), class: "btn btn-success m-1"
       = link_to "Edytuj", edit_activity_path(activity), class: "btn btn-success m-1"

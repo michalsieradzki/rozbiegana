@@ -1,0 +1,78 @@
+// app/views/admin/shared/_data_table.html.slim
+.card
+  .card-header.d-flex.justify-content-between.align-items-center
+    h5.mb-0
+      = icon_class ? content_tag(:i, '', class: "#{icon_class} me-2") : ''
+      = title
+    - if filters
+      button.btn.btn-outline-secondary.btn-sm[type="button" data-bs-toggle="collapse" data-bs-target="#filters" aria-expanded="false"]
+        i.bi.bi-funnel.me-1
+        | Filtry
+
+  - if filters
+    #filters.collapse
+      .card-body.border-bottom.bg-light
+        = form_with url: request.path, method: :get, class: "row g-3", local: true do |f|
+          - filters.each do |filter|
+            .col-md-4
+              = f.label filter[:name], filter[:label], class: "form-label"
+              - case filter[:type]
+              - when :text
+                = f.text_field filter[:name], value: params[filter[:name]], class: "form-control", placeholder: filter[:placeholder]
+              - when :select
+                = f.select filter[:name], options_for_select(filter[:options], params[filter[:name]]), { include_blank: filter[:placeholder] }, { class: "form-select" }
+              - when :number
+                = f.number_field filter[:name], value: params[filter[:name]], class: "form-control", placeholder: filter[:placeholder]
+          .col-md-12
+            = f.submit "Filtruj", class: "btn btn-primary btn-sm me-2"
+            = link_to "Wyczyść", request.path, class: "btn btn-outline-secondary btn-sm"
+
+  .card-body.p-0
+    - if items.any?
+      .table-responsive
+        table.table.table-hover.mb-0
+          thead.table-light
+            tr
+              - columns.each do |column|
+                th = column[:label]
+              th.text-end style="width: 150px;" Akcje
+          tbody
+            - items.each do |item|
+              tr
+                - columns.each do |column|
+                  td
+                    - if column[:format] == :badge
+                      span.badge class="#{column[:badge_class]&.call(item) || 'bg-secondary'}"
+                        = column[:value].call(item)
+                    - elsif column[:format] == :link
+                      = link_to column[:value].call(item), column[:url].call(item), class: "text-decoration-none"
+                    - elsif column[:format] == :date
+                      = column[:value].call(item).strftime('%d.%m.%Y %H:%M') rescue '-'
+                    - elsif column[:format] == :boolean
+                      = column[:value].call(item) ? '✅' : '❌'
+                    - elsif column[:format] == :number
+                      = number_with_delimiter(column[:value].call(item))
+                    - else
+                      = column[:value].call(item)
+                   
+                td.text-end
+                  .btn-group.btn-group-sm role="group"
+                    - actions.each do |action|
+                      - if action[:condition].nil? || action[:condition].call(item)
+                        - case action[:method]
+                        - when :delete, :patch
+                          - if action[:confirm]
+                            = form_with url: action[:url].call(item), method: action[:method], class: "d-inline", data: { controller: "confirm", action: "submit->confirm#show", confirm_message_value: action[:confirm], confirm_type_value: action[:action_type] || 'danger' } do |f|
+                              = f.button type: "submit", class: "btn #{action[:class]}", title: action[:title] do
+                                i class="#{action[:icon]}"
+                          - else
+                            = form_with url: action[:url].call(item), method: action[:method], class: "d-inline" do |f|
+                              = f.button type: "submit", class: "btn #{action[:class]}", title: action[:title] do
+                                i class="#{action[:icon]}"
+                        - else
+                          = link_to action[:url].call(item), class: "btn #{action[:class] || 'btn-outline-primary'}", title: action[:title] do
+                            i class="#{action[:icon]}"
+    - else
+      .text-center.text-muted.py-5
+        i.bi.bi-inbox.fs-1.d-block.mb-2
+        | Brak danych do wyświetlenia

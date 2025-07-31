@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyText
+  competition_type: MyString
+  start_date: 2025-07-31
+  end_date: 2025-07-31
+  is_main: false
+  is_active: false
+  points_multiplier: 1.5
+  rules: 
+
+two:
+  name: MyString
+  description: MyText
+  competition_type: MyString
+  start_date: 2025-07-31
+  end_date: 2025-07-31
+  is_main: false
+  is_active: false
+  points_multiplier: 1.5
+  rules: 

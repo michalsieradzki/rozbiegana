@@ -1,0 +1,131 @@
+.d-flex.justify-content-between.align-items-center.mb-4
+  h1
+    i.bi.bi-activity.me-2
+    | Aktywność ##{@activity.id}
+  .btn-group
+    = link_to admin_user_path(@activity.user), class: "btn btn-outline-info" do
+      i.bi.bi-person.me-1
+      | Zobacz użytkownika
+    = link_to admin_activities_path, class: "btn btn-outline-secondary" do
+      i.bi.bi-arrow-left.me-1
+      | Powrót
+
+.row
+  .col-md-8
+    .card.mb-4
+      .card-header
+        h5.mb-0
+          i.bi.bi-info-circle.me-2
+          | Szczegóły aktywności
+      .card-body
+        .row
+          .col-md-6
+            strong Użytkownik:
+            br
+            = link_to @activity.user.username, admin_user_path(@activity.user), class: "text-decoration-none"
+          .col-md-6
+            strong Drużyna:
+            br
+            span.badge class="#{team_badge_class(@activity.user)} fs-6"
+              = @activity.user.team&.name || 'Brak'
+        
+        hr
+        
+        .row
+          .col-md-4
+            strong Dystans:
+            br
+            .fs-4.text-primary = "#{@activity.distance} km"
+          .col-md-4
+            strong Czas:
+            br
+            .fs-4.text-success = "#{@activity.hours}:#{@activity.minutes.to_s.rjust(2, '0')}:#{@activity.seconds.to_s.rjust(2, '0')}"
+          .col-md-4
+            strong Punkty:
+            br
+            .fs-4.text-warning = @activity.score
+        
+        hr
+        
+        .row
+          .col-md-6
+            strong Konkurs:
+            br
+            - if @activity.competition
+              span.badge.bg-primary.fs-6 = @activity.competition.name
+            - else
+              span.text-muted Brak przypisania
+          .col-md-6
+            strong Średnie tempo:
+            br
+            - pace_minutes = (@activity.pace / 60).to_i
+            - pace_seconds = (@activity.pace % 60).to_i
+            = "#{pace_minutes}:#{pace_seconds.to_s.rjust(2, '0')} min/km"
+        
+        - if @activity.description.present?
+          hr
+          strong Opis:
+          p.mt-2 = simple_format(@activity.description)
+
+    - if @activity.image.attached?
+      .card.mb-4
+        .card-header
+          h5.mb-0
+            i.bi.bi-image.me-2
+            | Zdjęcie
+        .card-body
+          = image_tag @activity.image, class: "img-fluid rounded", style: "max-height: 400px;"
+
+    .card
+      .card-header.d-flex.justify-content-between.align-items-center
+        h5.mb-0
+          i.bi.bi-chat.me-2
+          | Komentarze (#{@comments.count})
+      .card-body
+        - if @comments.any?
+          - @comments.each do |comment|
+            .border-bottom.pb-2.mb-2
+              .d-flex.justify-content-between.align-items-start
+                div
+                  strong = comment.user.username
+                  .text-muted.small = comment.created_at.strftime('%d.%m.%Y %H:%M')
+                - if comment.hide?
+                  span.badge.bg-danger UKRYTY
+              p.mb-1 = simple_format(comment.content)
+        - else
+          .text-center.text-muted.py-4
+            | Brak komentarzy
+
+  .col-md-4
+    .card.mb-4
+      .card-header
+        h5.mb-0
+          i.bi.bi-bar-chart.me-2
+          | Statystyki
+      .card-body
+        .mb-3
+          .d-flex.justify-content-between
+            span Data utworzenia:
+            strong = @activity.created_at.strftime('%d.%m.%Y %H:%M')
+        .mb-3
+          .d-flex.justify-content-between
+            span Komentarze:
+            strong = @activity.comments.count
+        .mb-3
+          .d-flex.justify-content-between
+            span Polubienia:
+            strong = @activity.likes.count
+        .mb-3
+          .d-flex.justify-content-between
+            span Prędkość średnia:
+            strong = "#{(@activity.distance / (@activity.hours + @activity.minutes/60.0 + @activity.seconds/3600.0)).round(2)} km/h"
+
+    .card
+      .card-header
+        h5.mb-0
+          i.bi.bi-gear.me-2
+          | Akcje
+      .card-body
+        = link_to admin_activity_path(@activity), method: :delete, class: "btn btn-danger w-100", data: { confirm: "Czy na pewno usunąć tę aktywność? Ta akcja jest nieodwracalna!" } do
+          i.bi.bi-trash.me-1
+          | Usuń aktywność

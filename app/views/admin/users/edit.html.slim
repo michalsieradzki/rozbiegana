@@ -1,0 +1,107 @@
+.d-flex.justify-content-between.align-items-center.mb-4
+  h1
+    i.bi.bi-pencil.me-2
+    | Edytuj: #{@user.username}
+    - if @user.deleted?
+      span.badge.bg-danger.ms-2 USUNIĘTY
+  .btn-group
+    = link_to admin_user_path(@user), class: "btn btn-outline-primary" do
+      i.bi.bi-eye.me-1
+      | Pokaż
+    = link_to admin_users_path, class: "btn btn-outline-secondary" do
+      i.bi.bi-arrow-left.me-1
+      | Powrót
+
+.row
+  .col-md-8
+    .card
+      .card-header
+        h5.mb-0
+          i.bi.bi-pencil.me-2
+          | Edycja użytkownika
+      .card-body
+        = render 'form', user: @user
+
+  .col-md-4
+    .card.mb-4
+      .card-header
+        h5.mb-0
+          i.bi.bi-info-circle.me-2
+          | Informacje
+      .card-body
+        .mb-3
+          strong Data rejestracji:
+          br
+          = @user.created_at.strftime('%d.%m.%Y %H:%M')
+        .mb-3
+          strong Ostatnia aktualizacja:
+          br
+          = @user.updated_at.strftime('%d.%m.%Y %H:%M')
+        .mb-3
+          strong Status:
+          br
+          - if @user.deleted?
+            span.badge.bg-danger Usunięty
+            br
+            small.text-muted = @user.deleted_at.strftime('%d.%m.%Y %H:%M')
+          - else
+            span.badge.bg-success Aktywny
+        .mb-3
+          strong Uprawnienia:
+          br
+          - if @user.admin?
+            span.badge.bg-warning.text-dark Administrator
+          - else
+            span.badge.bg-secondary Użytkownik
+
+    .card.mb-4
+      .card-header
+        h5.mb-0
+          i.bi.bi-bar-chart.me-2
+          | Statystyki
+      .card-body
+        .mb-2
+          .d-flex.justify-content-between
+            span Aktywności:
+            strong = @user.activities.count
+        .mb-2
+          .d-flex.justify-content-between
+            span Łączne punkty:
+            strong = @user.activities.sum(:score)
+        .mb-2
+          .d-flex.justify-content-between
+            span Komentarze:
+            strong = @user.comments.count
+        .mb-2
+          .d-flex.justify-content-between
+            span Polubienia:
+            strong = @user.likes.count
+
+    .card
+      .card-header
+        h5.mb-0
+          i.bi.bi-gear.me-2
+          | Szybkie akcje
+      .card-body
+        - unless @user.deleted?
+          = form_with url: toggle_admin_admin_user_path(@user), method: :patch, class: "mb-2", data: { controller: "confirm", action: "submit->confirm#show", confirm_message_value: "Czy na pewno chcesz zmienić uprawnienia?", confirm_type_value: "warning" } do |f|
+            = f.button type: "submit", class: "btn btn-info w-100" do
+              i.bi.bi-shield-check.me-1
+              = @user.admin? ? "Odbierz admin" : "Nadaj admin"
+          
+          = form_with url: assign_team_admin_user_path(@user), method: :patch, class: "mb-2" do |f|
+            = f.label :team_id, "Zmień drużynę:", class: "form-label"
+            .input-group
+              = f.select :team_id, options_from_collection_for_select(Team.all, :id, :name, @user.team_id), { prompt: 'Wybierz...' }, { class: "form-select" }
+              = f.submit "Zmień", class: "btn btn-outline-primary"
+        
+        - if @user.deleted?
+          = form_with url: restore_admin_user_path(@user), method: :patch, data: { controller: "confirm", action: "submit->confirm#show", confirm_message_value: "Czy na pewno chcesz przywrócić tego użytkownika?", confirm_type_value: "info" } do |f|
+            = f.button type: "submit", class: "btn btn-success w-100" do
+              i.bi.bi-arrow-clockwise.me-1
+              | Przywróć użytkownika
+        - elsif @user != current_user
+          = form_with url: admin_user_path(@user), method: :delete, data: { controller: "confirm", action: "submit->confirm#show", confirm_message_value: "Czy na pewno chcesz dezaktywować tego użytkownika?", confirm_type_value: "danger" } do |f|
+            = f.button type: "submit", class: "btn btn-danger w-100" do
+              i.bi.bi-trash.me-1
+              | Dezaktywuj

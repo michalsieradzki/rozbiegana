@@ -1,0 +1,30 @@
+.d-flex.justify-content-between.align-items-center.mb-4
+  h1
+    i.bi.bi-people.me-2
+    | Zarządzanie użytkownikami
+  = link_to new_admin_user_path, class: "btn btn-success" do
+    i.bi.bi-person-plus.me-1
+    | Dodaj użytkownika
+
+= render 'admin/shared/data_table', title: 'Lista użytkowników', icon_class: 'bi bi-people', items: @users, filters: @table_filters, columns: @table_columns, actions: @table_actions
+
+// Prosta paginacja
+- if @users.respond_to?(:current_page)
+  .d-flex.justify-content-center.mt-4
+    nav
+      ul.pagination
+        - if @users.prev_page
+          li.page-item
+            = link_to admin_users_path(page: @users.prev_page, search: params[:search]), class: "page-link" do
+              | « Poprzednia
+        
+        li.page-item.active
+          span.page-link
+            = @users.current_page
+            |  / 
+            = @users.total_pages
+        
+        - if @users.next_page
+          li.page-item
+            = link_to admin_users_path(page: @users.next_page, search: params[:search]), class: "page-link" do
+              | Następna »

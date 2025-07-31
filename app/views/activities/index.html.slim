@@ -13,9 +13,15 @@
         i.bi.bi-plus-circle.me-2
         | Dodaj aktywność
 
-#activities
-  - @activities.each do |activity|
-    = render activity
+div data-controller="infinite-scroll" data-infinite-scroll-url-value="#{activities_path}" data-infinite-scroll-page-value="1" data-infinite-scroll-has-more-value="true"
+  
+  #activities data-infinite-scroll-target="container"
+    = render partial: 'activities_page', locals: { activities: @activities }
+  
+  .text-center.my-4 data-infinite-scroll-target="loadingIndicator" style="display: none;"
+    .spinner-border.text-primary role="status"
+      span.visually-hidden Ładowanie...
+    p.mt-2.text-muted Ładowanie kolejnych aktywności...
 
 // Chat offcanvas (bez większych zmian, tylko ikony)
 .offcanvas.offcanvas-end#chatOffcanvas tabindex="-1" aria-labelledby="chatOffcanvasLabel" data-controller="chat"

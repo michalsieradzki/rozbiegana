@@ -1,5 +1,6 @@
 class Activity < ApplicationRecord
   belongs_to :user, class_name: "User"
+  belongs_to :competition, optional: true
   has_one_attached :image
   has_many :comments, dependent: :delete_all
   has_many :likes, dependent: :delete_all
@@ -8,16 +9,33 @@ class Activity < ApplicationRecord
 
   validates :distance, presence: true, numericality: { greater_than_or_equal_to: 5 }
 
-  # validate :distance_in_competition
-
-
 
   validates :description, presence: true
   validates :hours, presence: true
   validates :minutes, presence: true
   validates :seconds, presence: true
   validates :image, presence: true
-  #before_destroy :destroy_associated_notifications
+
+  # Automatyczne przypisanie do aktywnego konkursu i liczenie score
+  before_save :assign_to_current_competition
+  before_save :set_score
+
+  # Scope'y dla lepszej czytelności i wydajności
+  scope :recent, -> { order(created_at: :desc) }
+  scope :for_month, ->(month, year = Time.current.year) { 
+    start_date = Date.new(year, month, 1).beginning_of_month
+    end_date = start_date.end_of_month
+    where(created_at: start_date..end_date)
+  }
+  scope :with_associations, -> { includes(:user, :comments, :likes, :competition, user: :team) }
+  scope :top_distance, ->(limit = 10) { order(distance: :desc).limit(limit) }
+  scope :top_pace, ->(limit = 10) { 
+    select("activities.*, (hours * 3600 + minutes * 60 + seconds) / distance AS pace_calc")
+    .order("pace_calc ASC")
+    .limit(limit)
+  }
+  scope :for_competition, ->(competition) { where(competition: competition) }
+
   def pace
     total_seconds = hours * 3600 + minutes * 60 + seconds
     speed = distance / total_seconds
@@ -26,28 +44,25 @@ class Activity < ApplicationRecord
   end
 
   def calculate_score
-    return 0 if user.team == "niesklasyfikowany"
-
-    if competition
-      distance.floor * 5
-    else
-      base_score = case pace
-                   when 0...300 then distance.floor * 3
-                   when 300...330 then distance.floor * 2.5
-                   when 330...360 then distance.floor * 2
-                   when 360...390 then distance.floor * 1.5
-                   else distance.floor * 1
-                   end
-      base_score
-    end
+    return 0 if user.team.name == "niesklasyfikowany"
+    return 0 unless competition
+    
+    competition.calculate_score_for_activity(self)
   end
 
   private
-  def distance_in_competition
-    if competition && distance > 10.0
-      errors.add(:distance, "Dystans na oficjalnym treningu nie może być większy niż 10 kilometrów.")
+
+  def assign_to_current_competition
+    # Automatycznie przypisz do głównego aktywnego konkursu jeśli nie ma przypisanego
+    if competition.nil?
+      self.competition = Competition.current_main_competition
     end
   end
+
+  def set_score
+    self.score = calculate_score
+  end
+
   def destroy_associated_notifications
     notifications.destroy_all
   end
