@@ -86,3 +86,7 @@ nav.navbar.navbar-expand-lg.fixed-top
             = link_to new_user_registration_path, class: "btn btn-success" do
               i.bi.bi-person-plus.me-1
               | Zarejestruj się
+          li.nav-item
+            = link_to rooms_path, class: "nav-link" do
+              i.bi.bi-chat-dots-fill.me-1
+              | Chat

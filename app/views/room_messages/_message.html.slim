@@ -1,0 +1,33 @@
+.mb-3 id="room_message_#{message.id}"
+  .d-flex.align-items-start
+    / Avatar użytkownika - defaultowy z inicjałami
+    .flex-shrink-0.me-3
+      - if message.user.image.attached?
+        = image_tag message.user.image, class: "rounded-circle", size: "40x40"
+      - else
+        / Generowanie kolorowego avatara z inicjałami
+        - user_colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14', '#20c997', '#6c757d']
+        - color = user_colors[message.user.id % user_colors.length]
+        - initials = message.user.username.split.map(&:first).join.upcase.first(2)
+        .rounded-circle.d-flex.align-items-center.justify-content-center.text-white.fw-bold style="width: 40px; height: 40px; min-width: 40px; background-color: #{color}; font-size: 14px;"
+          = initials
+    
+    / Treść wiadomości
+    .flex-grow-1.min-w-0
+      .d-flex.align-items-baseline.mb-1.flex-wrap
+        strong.me-2.text-truncate = message.user.username
+        
+        - if message.user.admin?
+          span.badge.bg-warning.text-dark.me-2.small
+            i.bi.bi-shield-check.me-1
+            | Admin
+        
+        small.text-muted.flex-shrink-0 = time_ago_in_words(message.created_at) + " temu"
+      
+      / Treść wiadomości
+      .bg-white.rounded.p-2.shadow-sm.border
+        = simple_format(message.content, class: "mb-0 text-break")
+      
+      / Precyzyjny timestamp
+      small.text-muted.opacity-75.mt-1 title="#{message.created_at.strftime('%d.%m.%Y %H:%M:%S')}"
+        = message.created_at.strftime('%H:%M')

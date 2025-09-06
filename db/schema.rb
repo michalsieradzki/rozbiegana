@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_31_112757) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_30_120035) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -96,6 +96,19 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_31_112757) do
     t.index ["start_date", "end_date"], name: "index_competitions_on_start_date_and_end_date"
   end
 
+  create_table "conversations", force: :cascade do |t|
+    t.bigint "sender_id", null: false
+    t.bigint "recipient_id", null: false
+    t.bigint "room_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["recipient_id", "sender_id"], name: "index_conversations_on_recipient_id_and_sender_id", unique: true
+    t.index ["recipient_id"], name: "index_conversations_on_recipient_id"
+    t.index ["room_id"], name: "index_conversations_on_room_id"
+    t.index ["sender_id", "recipient_id"], name: "index_conversations_on_sender_id_and_recipient_id", unique: true
+    t.index ["sender_id"], name: "index_conversations_on_sender_id"
+  end
+
   create_table "likes", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "activity_id", null: false
@@ -104,14 +117,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_31_112757) do
     t.index ["activity_id"], name: "index_likes_on_activity_id"
     t.index ["user_id", "activity_id"], name: "index_likes_on_user_id_and_activity_id", unique: true
     t.index ["user_id"], name: "index_likes_on_user_id"
-  end
-
-  create_table "messages", force: :cascade do |t|
-    t.text "content"
-    t.bigint "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -124,6 +129,41 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_31_112757) do
     t.datetime "updated_at", null: false
     t.index ["read_at"], name: "index_notifications_on_read_at"
     t.index ["recipient_type", "recipient_id"], name: "index_notifications_on_recipient"
+  end
+
+  create_table "room_memberships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "room_id", null: false
+    t.bigint "user_id", null: false
+    t.integer "role", default: 0
+    t.datetime "last_read_at"
+    t.index ["role"], name: "index_room_memberships_on_role"
+    t.index ["room_id"], name: "index_room_memberships_on_room_id"
+    t.index ["user_id", "room_id"], name: "index_room_memberships_on_user_id_and_room_id", unique: true
+    t.index ["user_id"], name: "index_room_memberships_on_user_id"
+  end
+
+  create_table "room_messages", force: :cascade do |t|
+    t.bigint "room_id", null: false
+    t.bigint "user_id", null: false
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["room_id", "created_at"], name: "index_room_messages_on_room_id_and_created_at"
+    t.index ["room_id"], name: "index_room_messages_on_room_id"
+    t.index ["user_id"], name: "index_room_messages_on_user_id"
+  end
+
+  create_table "rooms", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.integer "room_type", default: 0
+    t.json "settings", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_rooms_on_name", unique: true
+    t.index ["room_type"], name: "index_rooms_on_room_type"
   end
 
   create_table "teams", force: :cascade do |t|
@@ -155,8 +195,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_31_112757) do
   add_foreign_key "activities", "users"
   add_foreign_key "comments", "activities"
   add_foreign_key "comments", "users"
+  add_foreign_key "conversations", "rooms"
+  add_foreign_key "conversations", "users", column: "recipient_id"
+  add_foreign_key "conversations", "users", column: "sender_id"
   add_foreign_key "likes", "activities"
   add_foreign_key "likes", "users"
-  add_foreign_key "messages", "users"
+  add_foreign_key "room_memberships", "rooms"
+  add_foreign_key "room_memberships", "users"
+  add_foreign_key "room_messages", "rooms"
+  add_foreign_key "room_messages", "users"
   add_foreign_key "users", "teams"
 end

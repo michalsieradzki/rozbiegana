@@ -5,8 +5,7 @@ class ActivitiesController < ApplicationController
   def index
     @activities = Activity.with_associations.recent.page(params[:page]).per(10)
     @comment = Comment.new
-    @messages = Message.all.order(created_at: :desc).limit(20)
-    @message = Message.new
+
 
     respond_to do |format|
       format.html

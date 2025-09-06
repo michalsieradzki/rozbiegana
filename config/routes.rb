@@ -5,7 +5,6 @@ Rails.application.routes.draw do
   resources :comments
   resources :activities
   resources :likes, only: [:create, :destroy]
-  resources :messages, only: [:index, :create]
   get '/myactive', to: 'activities#myactive'
   get '/top', to: 'activities#top'
   get '/konkurs', to: 'competitions#index'
@@ -60,4 +59,10 @@ Rails.application.routes.draw do
   get "/service-worker.js" => "service_worker#service_worker"
   get "/manifest.json" => "service_worker#manifest"
   root 'activities#index'
+
+  resources :rooms, only: [:index, :show] do
+    resources :room_messages, only: [:create]
+  end
+
+  resources :conversations, only: [:create]
 end

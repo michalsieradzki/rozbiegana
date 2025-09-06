@@ -5,9 +5,9 @@
   
   .row.g-3.mb-4
     .col-md-6
-      button.btn.btn-outline-success.btn-lg.w-100.chat-toggle type="button" data-bs-toggle="offcanvas" data-bs-target="#chatOffcanvas" aria-controls="chatOffcanvas"
-        i.bi.bi-chat-dots.me-2
-        | Zajrzyj do Chatu
+      = link_to rooms_path, class: "btn btn-outline-primary btn-lg w-100" do
+        i.bi.bi-chat-dots-fill.me-2
+        | Przejdź do Chatu
     .col-md-6
       = link_to new_activity_path, class: "btn btn-success btn-lg w-100" do
         i.bi.bi-plus-circle.me-2
@@ -22,19 +22,5 @@ div data-controller="infinite-scroll" data-infinite-scroll-url-value="#{activiti
     .spinner-border.text-primary role="status"
       span.visually-hidden Ładowanie...
     p.mt-2.text-muted Ładowanie kolejnych aktywności...
-
-// Chat offcanvas (bez większych zmian, tylko ikony)
-.offcanvas.offcanvas-end#chatOffcanvas tabindex="-1" aria-labelledby="chatOffcanvasLabel" data-controller="chat"
-  .offcanvas-header.bg-primary.text-white
-    h5#chatOffcanvasLabel.offcanvas-title
-      i.bi.bi-chat-heart.me-2
-      | Live Chat
-    button.btn-close.btn-close-white type="button" data-bs-dismiss="offcanvas" aria-label="Close"
-  .offcanvas-body
-    = turbo_stream_from "chat"
-    = turbo_frame_tag "chat_messages", class: "d-flex flex-column-reverse overflow-auto", style: "height: 95vh;", data: { chat_target: "messages" } do
-      = render @messages
-
-  = render partial: "messages/form", locals: { message: @message }
 
 

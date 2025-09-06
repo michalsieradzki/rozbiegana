@@ -1,0 +1,122 @@
+.container-fluid.p-0 style="height: calc(100vh - 76px); margin-top: 76px;"
+  .row.h-100.g-0
+    / Sidebar z pokojami - SZERSZY
+    .col-md-4.col-lg-3.col-xl-3.bg-light.border-end.d-flex.flex-column
+      .p-3.border-bottom
+        h6.mb-0.text-center
+          i.bi.bi-chat-dots-fill.me-1.text-primary
+          | Chat
+      
+      .flex-grow-1.overflow-auto
+        .list-group.list-group-flush
+          - @rooms.each do |room|
+            = link_to room_path(room), class: "list-group-item list-group-item-action border-0 py-3 #{'active' if room == @room}" do
+              .d-flex.align-items-center
+                .me-3
+                  - case room.room_type
+                  - when 'general'
+                    i.bi.bi-people-fill.text-success.fs-5
+                  - when 'admin_announce' 
+                    i.bi.bi-megaphone-fill.text-warning.fs-5
+                  - when 'admin_only'
+                    i.bi.bi-shield-fill.text-danger.fs-5
+                  - else
+                    i.bi.bi-chat-dots.fs-5
+                .flex-grow-1
+                  .fw-semibold = room.name
+                  - if room.description.present?
+                    small.text-muted = room.description
+
+        / PRYWATNE ROZMOWY - DODAJ PO ISTNIEJĄCYCH POKOJACH
+        - if @conversations.any?
+          .px-3.py-2.border-top.mt-2
+            small.text-muted.fw-semibold.text-uppercase
+              i.bi.bi-person-fill.me-2
+              | Rozmowy prywatne
+          
+          .list-group.list-group-flush
+            - @conversations.each do |conversation|
+              = link_to room_path(conversation.room), class: "list-group-item list-group-item-action border-0 py-2 #{'active' if conversation.room == @room}" do
+                .d-flex.align-items-center
+                  .me-2
+                    i.bi.bi-person-circle.text-primary
+                  .flex-grow-1
+                    .fw-semibold.small = conversation.display_name(current_user)
+                    - if conversation.last_message
+                      small.text-muted = truncate(conversation.last_message.content, length: 25)
+                    - else
+                      small.text-muted.fst-italic Rozpocznij rozmowę
+
+        / PRZYCISK NOWEJ ROZMOWY - MODAL
+        - if @available_users.any?
+          .px-3.py-2.border-top
+            button.btn.btn-sm.btn-outline-primary.w-100 type="button" data-bs-toggle="modal" data-bs-target="#newConversationModal"
+              i.bi.bi-plus.me-1
+              | Nowa rozmowa
+
+    / Główny obszar chatu - POPRAWIONY GRID
+    .col-md-8.col-lg-9.col-xl-9 style="display: grid; grid-template-rows: auto 1fr auto; height: 100%;"
+      / Header pokoju - AUTO HEIGHT
+      .p-3.border-bottom.bg-white
+        .d-flex.align-items-center.justify-content-between
+          div
+            h4.mb-1.d-flex.align-items-center
+              - case @room.room_type
+              - when 'general'
+                i.bi.bi-people-fill.text-success.me-2
+              - when 'admin_announce'
+                i.bi.bi-megaphone-fill.text-warning.me-2  
+              - when 'admin_only'
+                i.bi.bi-shield-fill.text-danger.me-2
+              
+              = @room.name
+              
+              - if @room.admin_only?
+                span.badge.bg-danger.ms-2.small Tylko admini
+              - elsif @room.admin_announce?
+                span.badge.bg-warning.ms-2.small Ogłoszenia
+            
+            - if @room.description.present?
+              p.text-muted.mb-0.small = @room.description
+          
+          div
+            small.text-muted
+              i.bi.bi-people.me-1
+              = @room.users.count
+              |  członków
+
+      / Obszar wiadomości - ZAJMUJE CAŁĄ DOSTĘPNĄ PRZESTRZEŃ
+      .p-3.bg-light.overflow-auto data-controller="chat" data-chat-room-id="#{@room.id}"
+        = turbo_stream_from "room_#{@room.id}"
+        div class="messages-container" id="room_#{@room.id}_messages"
+          - @room_messages.each do |message|
+            = render 'room_messages/message', message: message
+
+      / Formularz - AUTO HEIGHT NA DOLE
+      - if @room.can_write?(current_user)
+        .p-3.border-top.bg-white
+          = render 'room_messages/form', room: @room, message: @new_message
+      - else
+        .p-3.border-top.bg-light.text-center
+          .text-muted
+            i.bi.bi-lock.me-2
+            | Tylko administratorzy mogą pisać w tym kanale
+
+/ MODAL NA KOŃCU PLIKU (po zamknięciu głównego kontenera)
+.modal.fade#newConversationModal tabindex="-1"
+  .modal-dialog
+    .modal-content
+      .modal-header
+        h5.modal-title Nowa rozmowa prywatna
+        button.btn-close type="button" data-bs-dismiss="modal"
+      .modal-body
+        .list-group.list-group-flush
+          - @available_users.each do |user|
+            = link_to conversations_path(user_id: user.id), data: { turbo_method: :post }, class: "list-group-item list-group-item-action" do
+              .d-flex.align-items-center
+                .me-2
+                  i.bi.bi-person-circle.text-primary
+                .flex-grow-1
+                  = user.username
+                  - if user.admin?
+                    .badge.bg-warning.text-dark.ms-2.small Admin

@@ -157,7 +157,7 @@ Aplikacja webowa do organizacji konkursów biegowych i śledzenia aktywności cz
 
 ### Backend:
 - **Ruby on Rails** 7.1
-- **PostgreSQL** - baza danych
+- **PostgreSQL** - baza danych (`rozbiegana24_production`)
 - **Redis** - cache i session store
 - **Sidekiq** - background jobs (Faza 7)
 
@@ -169,9 +169,12 @@ Aplikacja webowa do organizacji konkursów biegowych i śledzenia aktywności cz
 - **Chart.js** - wykresy i statystyki (Faza 5)
 
 ### Deployment:
-- **Fly.io** - hosting (obecny)
-- **Docker** - konteneryzacja
-- **GitHub Actions** - CI/CD (do dodania)
+- **Dedykowany serwer** - `srv29.mikr.us:20168`
+- **Systemd service** - `rozbiegana`
+- **PostgreSQL** - baza danych (`rozbiegana24_production`)
+- **Nginx** - reverse proxy (port 80 → 3000)
+- **Automatyczne skrypty deployment** (`deploy.sh`, `quick_restart.sh`)
+- **Automatyczne backupy** - baza danych + pliki (retencja 7 dni)
 
 ---
 
@@ -209,7 +212,43 @@ Aplikacja webowa do organizacji konkursów biegowych i śledzenia aktywności cz
 
 ---
 
-## 🚀 **INSTALACJA I URUCHOMIENIE**
+## 🚀 **DEPLOYMENT I URUCHOMIENIE**
+
+### 🌐 **Dostęp do aplikacji:**
+**URL produkcyjny**: [http://srv29.mikr.us:20168](http://srv29.mikr.us:20168)
+
+### 🔧 **Deployment na serwerze:**
+
+#### **Pełny deployment (nowy kod, migracje, assets):**
+```bash
+sudo /var/www/rozbiegana/deploy.sh
+```
+
+#### **Szybki restart (tylko konfiguracja):**
+```bash
+sudo /var/www/rozbiegana/quick_restart.sh
+```
+
+### 📊 **Zarządzanie aplikacją:**
+
+#### **Status aplikacji:**
+```bash
+sudo systemctl status rozbiegana
+sudo systemctl restart rozbiegana
+```
+
+#### **Logi aplikacji:**
+```bash
+sudo journalctl -u rozbiegana -f --lines=50
+```
+
+#### **Backup bazy danych:**
+```bash
+# Automatyczne backupy w /var/backups/rozbiegana/
+ls -la /var/backups/rozbiegana/
+```
+
+### 🛠️ **Rozwój lokalny:**
 
 ```bash
 # Klonowanie repo
@@ -229,7 +268,7 @@ rails server
 ```
 
 ### Wymagania:
-- Ruby 3.2+
+- Ruby 3.2+ (rbenv na serwerze: `/root/.rbenv/`)
 - Rails 7.1+
 - PostgreSQL 12+
 - Node.js 18+ (dla importmap)

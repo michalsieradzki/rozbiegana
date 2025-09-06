@@ -21,6 +21,14 @@ h2
     = f.password_field :password_confirmation, autocomplete: "new-password",placeholder: "Potwierdź hasło", class: "form-control"
   .mb-2
     = f.password_field :current_password, autocomplete: "current-password", placeholder: "Aktualne hasło (wymagane do potwierdzenia zmian)", class: "form-control", required: true
+  .mb-2
+    = f.label :image, "Zdjęcie profilowe", class: "form-label"
+    - if resource.image.attached?
+      .mb-2
+        = image_tag resource.image, class: "rounded-circle", size: "60x60"
+        br
+        small.text-muted Obecne zdjęcie
+    = f.file_field :image, class: "form-control", accept: "image/*"
   = f.submit "Zaktualizuj", class: "btn btn-success btn-lg"
 h3.mt-4
   | Usuwanie konta

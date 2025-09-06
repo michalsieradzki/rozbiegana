@@ -1,0 +1,9 @@
+= form_with model: [room, message], local: false, class: "d-flex align-items-end", data: { controller: "chat-form", action: "turbo:submit-end->chat-form#clearInput" } do |f|
+  .flex-grow-1.me-2
+    = f.text_area :content, class: "form-control", rows: 1, placeholder: "Napisz wiadomość...", style: "resize: none; max-height: 120px;", data: { chat_form_target: "input", action: "keydown->chat-form#handleKeydown input->chat-form#autoResize" }
+    - if message.errors.any?
+      .text-danger.small.mt-1
+        = message.errors.full_messages.join(", ")
+  
+  = f.submit class: "btn btn-primary", data: { chat_form_target: "submit" } do
+    i.bi.bi-send-fill
