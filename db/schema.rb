@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_30_120035) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_10_161337) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -119,18 +119,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_30_120035) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
-  create_table "notifications", force: :cascade do |t|
-    t.string "recipient_type", null: false
-    t.bigint "recipient_id", null: false
-    t.string "type", null: false
-    t.json "params"
-    t.datetime "read_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["read_at"], name: "index_notifications_on_read_at"
-    t.index ["recipient_type", "recipient_id"], name: "index_notifications_on_recipient"
-  end
-
   create_table "room_memberships", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -184,6 +172,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_30_120035) do
     t.bigint "team_id"
     t.boolean "admin", default: false
     t.datetime "deleted_at"
+    t.text "push_subscription"
+    t.boolean "push_enabled", default: false
+    t.json "push_preferences"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["team_id"], name: "index_users_on_team_id"

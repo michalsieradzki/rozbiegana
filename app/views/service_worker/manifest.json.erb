@@ -1,17 +1,35 @@
 {
-  "short_name": "RozbieganApp",
-  "name": "Rozbiegana Kruszwica",
+  "short_name": "Rozbiegana",
+  "name": "Rozbiegana Kruszwica - Tracking biegowy",
   "id": "/",
+  "description": "Aplikacja do śledzenia treningów biegowych w Kruszwicy",
   "icons": [
     {
-      "src": "<%=image_path "logo.jpeg"%>",
-      "sizes": "144x144",
+      "src": "<%=image_path "icon192.png"%>",
+      "sizes": "192x192",
       "type": "image/png"
     }
   ],
+  "screenshots": [
+    {
+      "src": "<%=image_path "icon192.png"%>",
+      "sizes": "192x192",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "<%=image_path "icon192.png"%>",
+      "sizes": "192x192", 
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
   "start_url": "/",
-  "background_color": "#FFFFFF",
+  "background_color": "#198754",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "scope": "/",
-  "theme_color": "#FFFFFF"
+  "theme_color": "#198754",
+  "categories": ["sports", "fitness", "lifestyle"],
+  "lang": "pl"
 }

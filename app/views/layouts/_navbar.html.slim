@@ -1,6 +1,5 @@
 nav.navbar.navbar-expand-lg.fixed-top
   .container-fluid
-    = render 'layouts/notifications'
     
     = link_to root_path, class: "navbar-brand" do
       = image_tag 'logo-without-bg.png', size: "120x60", alt: "Rozbiegana"
@@ -62,6 +61,34 @@ nav.navbar.navbar-expand-lg.fixed-top
                   | Wyloguj
         
         .d-flex.align-items-center
+          // PWA Controls
+          div data-controller="pwa"
+            // Install button
+            div style="display: none;" data-pwa-target="installButton"
+              button.btn.btn-outline-success.btn-sm.me-2 data-action="click->pwa#install"
+                i.bi.bi-download.me-1
+                | Zainstaluj Aplikację
+            
+            // Dev tools (only in development)
+            - if Rails.env.development?
+              div.dropdown style="display: none;" data-pwa-target="devTools"
+                button.btn.btn-outline-warning.btn-sm.dropdown-toggle.me-2 type="button" data-bs-toggle="dropdown"
+                  i.bi.bi-tools.me-1
+                  | PWA Dev
+                ul.dropdown-menu
+                  li
+                    button.dropdown-item data-action="click->pwa#clearCaches"
+                      i.bi.bi-trash.me-2
+                      | Clear Cache
+                  li
+                    button.dropdown-item data-action="click->pwa#forceUpdate"
+                      i.bi.bi-arrow-clockwise.me-2
+                      | Force Update
+                  li
+                    button.dropdown-item data-action="click->pwa#forceShowInstall"
+                      i.bi.bi-download.me-2
+                      | Force Show Install
+          
           - activities = Activity.where(created_at: Time.now.beginning_of_month..Time.now.end_of_month)
           .badge.bg-success.fs-6.px-3.py-2.me-2
             i.bi.bi-speedometer.me-1

@@ -10,6 +10,20 @@ html
     link[rel="manifest" crossorigin="use-credentials" href="/manifest.json"]
     = javascript_importmap_tags
     = favicon_link_tag asset_path('favicon.ico')
+    
+    / Service Worker registration
+    javascript:
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(function(registration) {
+              console.log('[PWA] Service Worker registered successfully:', registration.scope);
+            })
+            .catch(function(error) {
+              console.log('[PWA] Service Worker registration failed:', error);
+            });
+        });
+      }
   body
     = render 'layouts/navbar'
     

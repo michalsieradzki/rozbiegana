@@ -1,0 +1,119 @@
+<% if Rails.env.development? %>
+// Development - always use new cache version
+const CACHE_NAME = 'rozbiegana-dev-<%= Time.current.to_i %>';
+const OFFLINE_URL = '/';
+
+// In development, don't cache aggressively
+const urlsToCache = [
+  '/',
+  '/favicon.ico'
+];
+
+<% else %>
+// Production - stable cache version
+const CACHE_NAME = 'rozbiegana-v1';
+const OFFLINE_URL = '/';
+
+const urlsToCache = [
+  '/',
+  '/assets/application.css',
+  '/assets/application.js',
+  '/favicon.ico'
+];
+<% end %>
+
+// Install event - cache essential files
+self.addEventListener('install', function(event) {
+  console.log('[ServiceWorker] Installing...', CACHE_NAME);
+  
+  <% if Rails.env.development? %>
+  // In development, skip waiting immediately
+  self.skipWaiting();
+  <% else %>
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(function(cache) {
+        console.log('[ServiceWorker] Caching app shell');
+        return cache.addAll(urlsToCache);
+      })
+      .then(function() {
+        console.log('[ServiceWorker] Skip waiting on install');
+        return self.skipWaiting();
+      })
+  );
+  <% end %>
+});
+
+// Activate event - clean up old caches
+self.addEventListener('activate', function(event) {
+  console.log('[ServiceWorker] Activating...', CACHE_NAME);
+  
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(cacheName) {
+          if (cacheName !== CACHE_NAME) {
+            console.log('[ServiceWorker] Removing old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(function() {
+      console.log('[ServiceWorker] Claiming clients');
+      return self.clients.claim();
+    })
+  );
+});
+
+// Fetch event - serve from cache, fallback to network
+self.addEventListener('fetch', function(event) {
+  // Skip cross-origin requests
+  if (!event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
+  <% if Rails.env.development? %>
+  // In development, always fetch from network first
+  event.respondWith(
+    fetch(event.request)
+      .catch(function() {
+        return caches.match(event.request).then(function(response) {
+          return response || caches.match(OFFLINE_URL);
+        });
+      })
+  );
+  <% else %>
+  // Handle navigation requests (pages)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .catch(function() {
+          return caches.match(OFFLINE_URL);
+        })
+    );
+    return;
+  }
+
+  // Handle other requests
+  event.respondWith(
+    caches.match(event.request)
+      .then(function(response) {
+        // Return cached version or fetch from network
+        return response || fetch(event.request);
+      })
+      .catch(function() {
+        // If both cache and network fail, return offline page for navigation
+        if (event.request.destination === 'document') {
+          return caches.match(OFFLINE_URL);
+        }
+      })
+  );
+  <% end %>
+});
+
+<% if Rails.env.development? %>
+// Development helper - log all requests
+self.addEventListener('fetch', function(event) {
+  console.log('[ServiceWorker DEV] Fetch:', event.request.url);
+});
+<% end %>
