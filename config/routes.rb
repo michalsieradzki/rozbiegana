@@ -10,6 +10,17 @@ Rails.application.routes.draw do
   get '/konkurs', to: 'competitions#index'
   devise_for :users, controllers: { registrations: 'users/registrations' }
 
+  # Notifications routes
+  resources :notifications, only: [:index, :create] do
+    collection do
+      get :unread_count
+      patch :mark_all_read
+    end
+    member do
+      patch :mark_read
+    end
+  end
+
   # Panel administratora
   namespace :admin do
     get 'activities/index'

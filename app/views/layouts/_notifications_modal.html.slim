@@ -1,0 +1,63 @@
+/ Notifications Modal
+- if user_signed_in? && current_user.unread_notifications_count > 0
+  / Hidden button to trigger modal
+  button.btn.btn-primary.d-none#notificationsModalTrigger type="button" data-bs-toggle="modal" data-bs-target="#notificationsModal"
+    | Launch Notifications Modal
+
+  / Modal
+  .modal.fade#notificationsModal tabindex="-1" aria-labelledby="notificationsModalLabel" aria-hidden="true"
+    .modal-dialog.modal-lg
+      .modal-content
+        .modal-header.bg-primary.text-white
+          h5.modal-title#notificationsModalLabel
+            i.bi.bi-bell-fill.me-2
+            | Masz nowe powiadomienia!
+          button.btn-close.btn-close-white type="button" data-bs-dismiss="modal" aria-label="Close"
+        .modal-body
+          .row
+            .col-12
+              .alert.alert-info.d-flex.align-items-center
+                i.bi.bi-info-circle.me-2
+                | Masz #{current_user.unread_notifications_count} nieprzeczytanych powiadomień.
+              
+              - if current_user.notifications.unread.limit(5).any?
+                .list-group
+                  - current_user.notifications.unread.limit(5).each do |notification|
+                    .list-group-item.d-flex.justify-content-between.align-items-start
+                      .ms-2.me-auto
+                        .fw-bold
+                          = notification.title
+                        .text-muted.small
+                          = notification.body
+                        .text-muted.smaller
+                          = time_ago_in_words(notification.created_at) + " temu"
+                      - case notification.notification_type
+                        - when 'success'
+                          span.badge.bg-success.rounded-pill
+                            i.bi.bi-check-circle
+                        - when 'warning'
+                          span.badge.bg-warning.rounded-pill
+                            i.bi.bi-exclamation-triangle
+                        - when 'info'
+                          span.badge.bg-info.rounded-pill
+                            i.bi.bi-info-circle
+                        - else
+                          span.badge.bg-secondary.rounded-pill
+                            i.bi.bi-bell
+              
+              - if current_user.notifications.unread.count > 5
+                .alert.alert-light.text-center
+                  | ... i #{current_user.notifications.unread.count - 5} więcej powiadomień
+        .modal-footer
+          = button_to "Oznacz wszystkie jako przeczytane", mark_all_read_notifications_path, method: :patch, class: "btn btn-outline-primary", data: { confirm: "Oznaczyć wszystkie jako przeczytane?" }
+          button.btn.btn-primary type="button" data-bs-dismiss="modal"
+            | Zamknij
+
+  / Auto-click the trigger button
+  javascript:
+    document.addEventListener('DOMContentLoaded', function() {
+      var triggerButton = document.getElementById('notificationsModalTrigger');
+      if (triggerButton) {
+        triggerButton.click();
+      }
+    });

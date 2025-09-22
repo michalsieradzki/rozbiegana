@@ -40,4 +40,5 @@ html
           button.btn-close[type="button" data-bs-dismiss="alert" aria-label="Close"]
 
       = yield
-      
+
+    = render 'layouts/notifications_modal' if user_signed_in?

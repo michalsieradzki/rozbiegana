@@ -117,3 +117,76 @@ self.addEventListener('fetch', function(event) {
   console.log('[ServiceWorker DEV] Fetch:', event.request.url);
 });
 <% end %>
+
+// PUSH NOTIFICATIONS
+self.addEventListener('push', function(event) {
+  console.log('[ServiceWorker] Push received:', event);
+  
+  let notificationData = {
+    title: 'Rozbiegana',
+    body: 'Masz nową wiadomość!',
+    icon: '/assets/icon192.png',
+    badge: '/assets/icon192.png',
+    tag: 'rozbiegana-notification',
+    requireInteraction: false,
+    actions: [
+      {
+        action: 'open',
+        title: 'Otwórz',
+        icon: '/assets/icon192.png'
+      },
+      {
+        action: 'close',
+        title: 'Zamknij'
+      }
+    ]
+  };
+
+  // Try to parse push data
+  if (event.data) {
+    try {
+      const pushData = event.data.json();
+      notificationData = { ...notificationData, ...pushData };
+    } catch (e) {
+      console.log('[ServiceWorker] Push data is not JSON, using default');
+    }
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(notificationData.title, notificationData)
+  );
+});
+
+// Handle notification clicks
+self.addEventListener('notificationclick', function(event) {
+  console.log('[ServiceWorker] Notification clicked:', event);
+  
+  event.notification.close();
+
+  if (event.action === 'close') {
+    return;
+  }
+
+  // Default action or 'open' action
+  event.waitUntil(
+    clients.matchAll({ type: 'window' }).then(function(clientList) {
+      // If app is already open, focus it
+      for (let i = 0; i < clientList.length; i++) {
+        const client = clientList[i];
+        if (client.url === self.location.origin && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      
+      // If app is not open, open it
+      if (clients.openWindow) {
+        return clients.openWindow('/');
+      }
+    })
+  );
+});
+
+// Handle notification close
+self.addEventListener('notificationclose', function(event) {
+  console.log('[ServiceWorker] Notification closed:', event);
+});

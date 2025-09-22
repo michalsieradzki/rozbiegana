@@ -29,6 +29,57 @@ h2
         br
         small.text-muted Obecne zdjęcie
     = f.file_field :image, class: "form-control", accept: "image/*"
+
+  / Notification Preferences Section
+  .card.mt-4
+    .card-header
+      h5.mb-0
+        i.bi.bi-bell.me-2
+        | Preferencje powiadomień
+    .card-body
+      .alert.alert-info
+        i.bi.bi-info-circle.me-2
+        | Wybierz jakie powiadomienia chcesz otrzymywać w aplikacji.
+      
+      .row
+        .col-md-6
+          .form-check.mb-3
+            = hidden_field_tag "user[notification_preferences][notify_new_activities]", "0"
+            = check_box_tag "user[notification_preferences][notify_new_activities]", "1", resource.notification_enabled?('new_activities'), class: "form-check-input"
+            = label_tag "user[notification_preferences][notify_new_activities]", "Nowe aktywności", class: "form-check-label"
+            small.text-muted.d-block Powiadomienia gdy ktoś doda nową aktywność w Twojej okolicy
+          
+          .form-check.mb-3
+            = hidden_field_tag "user[notification_preferences][notify_comments]", "0"
+            = check_box_tag "user[notification_preferences][notify_comments]", "1", resource.notification_enabled?('comments'), class: "form-check-input"
+            = label_tag "user[notification_preferences][notify_comments]", "Komentarze", class: "form-check-label"
+            small.text-muted.d-block Powiadomienia gdy ktoś skomentuje Twoje aktywności
+          
+          .form-check.mb-3
+            = hidden_field_tag "user[notification_preferences][notify_competitions]", "0"
+            = check_box_tag "user[notification_preferences][notify_competitions]", "1", resource.notification_enabled?('competitions'), class: "form-check-input"
+            = label_tag "user[notification_preferences][notify_competitions]", "Konkursy", class: "form-check-label"
+            small.text-muted.d-block Powiadomienia o nowych konkursach i ich zakończeniu
+        
+        .col-md-6
+          .form-check.mb-3
+            = hidden_field_tag "user[notification_preferences][notify_achievements]", "0"
+            = check_box_tag "user[notification_preferences][notify_achievements]", "1", resource.notification_enabled?('achievements'), class: "form-check-input"
+            = label_tag "user[notification_preferences][notify_achievements]", "Osiągnięcia", class: "form-check-label"
+            small.text-muted.d-block Powiadomienia o nowych osiągnięciach i rekordach
+          
+          .form-check.mb-3
+            = hidden_field_tag "user[notification_preferences][notify_reminders]", "0"
+            = check_box_tag "user[notification_preferences][notify_reminders]", "1", resource.notification_enabled?('reminders'), class: "form-check-input"
+            = label_tag "user[notification_preferences][notify_reminders]", "Przypomnienia", class: "form-check-label"
+            small.text-muted.d-block Przypomnienia o treningach i aktywnościach
+          
+          .form-check.mb-3
+            = hidden_field_tag "user[notification_preferences][notify_weekly_summary]", "0"
+            = check_box_tag "user[notification_preferences][notify_weekly_summary]", "1", resource.notification_enabled?('weekly_summary'), class: "form-check-input"
+            = label_tag "user[notification_preferences][notify_weekly_summary]", "Podsumowanie tygodniowe", class: "form-check-label"
+            small.text-muted.d-block Cotygodniowe podsumowanie Twoich aktywności
+
   = f.submit "Zaktualizuj", class: "btn btn-success btn-lg"
 h3.mt-4
   | Usuwanie konta

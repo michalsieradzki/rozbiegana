@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_10_161337) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_22_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -119,6 +119,21 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_10_161337) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title", null: false
+    t.text "body"
+    t.string "notification_type", default: "info"
+    t.boolean "read", default: false
+    t.json "data"
+    t.datetime "read_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "created_at"], name: "index_notifications_on_user_id_and_created_at"
+    t.index ["user_id", "read"], name: "index_notifications_on_user_id_and_read"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
   create_table "room_memberships", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -175,6 +190,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_10_161337) do
     t.text "push_subscription"
     t.boolean "push_enabled", default: false
     t.json "push_preferences"
+    t.json "notification_preferences", default: {}
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["team_id"], name: "index_users_on_team_id"
@@ -191,6 +207,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_10_161337) do
   add_foreign_key "conversations", "users", column: "sender_id"
   add_foreign_key "likes", "activities"
   add_foreign_key "likes", "users"
+  add_foreign_key "notifications", "users"
   add_foreign_key "room_memberships", "rooms"
   add_foreign_key "room_memberships", "users"
   add_foreign_key "room_messages", "rooms"

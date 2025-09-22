@@ -10,7 +10,7 @@ class User < ApplicationRecord
   has_many :room_memberships, dependent: :destroy
   has_many :rooms, through: :room_memberships
   has_many :room_messages, dependent: :destroy
-  has_many :notifications, as: :recipient, dependent: :destroy
+  has_many :notifications, dependent: :destroy
   has_many :sent_conversations, class_name: 'Conversation', foreign_key: 'sender_id', dependent: :destroy
   has_many :received_conversations, class_name: 'Conversation', foreign_key: 'recipient_id', dependent: :destroy
   has_one_attached :image
@@ -43,6 +43,59 @@ class User < ApplicationRecord
   
   def conversation_with(other_user)
     Conversation.between(self, other_user).first
+  end
+
+  def unread_notifications_count
+    notifications.unread.count
+  end
+
+  def has_unread_notifications?
+    unread_notifications_count > 0
+  end
+
+  # Notification preferences with defaults
+  def notification_preferences
+    prefs = read_attribute(:notification_preferences)
+    if prefs.blank?
+      default_notification_preferences
+    else
+      # Merge with defaults to ensure all keys exist
+      default_notification_preferences.merge(prefs)
+    end
+  end
+
+  def default_notification_preferences
+    {
+      'notify_new_activities' => true,
+      'notify_comments' => true,
+      'notify_competitions' => true,
+      'notify_achievements' => true,
+      'notify_reminders' => true,
+      'notify_weekly_summary' => true
+    }
+  end
+
+  # Helper methods for notification preferences
+  def notification_enabled?(type)
+    value = notification_preferences["notify_#{type}"]
+    # Handle both boolean true and string "1"
+    value == true || value == "1"
+  end
+
+  def enable_notification_type(type)
+    prefs = notification_preferences
+    prefs["notify_#{type}"] = true
+    update(notification_preferences: prefs)
+  end
+
+  def disable_notification_type(type)
+    prefs = notification_preferences
+    prefs["notify_#{type}"] = false
+    update(notification_preferences: prefs)
+  end
+
+  def update_notification_preferences(preferences)
+    update(notification_preferences: preferences)
   end
 
   private

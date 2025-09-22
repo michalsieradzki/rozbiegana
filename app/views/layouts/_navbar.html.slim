@@ -29,6 +29,41 @@ nav.navbar.navbar-expand-lg.fixed-top
                     = "#{days_left}d"
                 - elsif days_left == 0
                   span.badge.bg-danger.ms-1.small ostatni dzień!
+          
+          // Notifications dropdown in desktop navbar
+          li.nav-item.dropdown.mx-2
+            a#notificationsDropdown.nav-link.dropdown-toggle[href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"]
+              i.bi.bi-bell.me-1
+              | Powiadomienia
+              - unread_count = current_user.unread_notifications_count
+              - if unread_count > 0
+                span.badge.bg-danger.ms-1
+                  = unread_count
+            ul.dropdown-menu.dropdown-menu-end.shadow[aria-labelledby="notificationsDropdown" style="min-width: 300px; max-height: 400px; overflow-y: auto;"]
+              - if current_user.notifications.unread.limit(10).any?
+                - current_user.notifications.unread.limit(10).each do |notification|
+                  li
+                    .dropdown-item.notification-item
+                      .d-flex.justify-content-between.align-items-start
+                        .flex-grow-1
+                          .fw-bold.small
+                            = notification.title
+                          .text-muted.small
+                            = notification.body
+                          .text-muted.smaller
+                            = time_ago_in_words(notification.created_at) + " temu"
+                        .ms-2
+                          = button_to "×", mark_read_notification_path(notification), method: :patch, class: "btn btn-sm btn-outline-danger", data: { confirm: "Oznaczyć jako przeczytane?" }
+                li
+                  hr.dropdown-divider
+                li.text-center
+                  = button_to "Oznacz wszystkie jako przeczytane", mark_all_read_notifications_path, method: :patch, class: "btn btn-sm btn-outline-primary", data: { confirm: "Oznaczyć wszystkie jako przeczytane?" }
+              - else
+                li.text-center.py-3
+                  .text-muted
+                    i.bi.bi-bell-slash.me-2
+                    | Brak nowych powiadomień
+          
           li.nav-item.dropdown.mx-2
             a#navbarDropdown.nav-link.dropdown-toggle[href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"]
               i.bi.bi-person-circle.me-1
@@ -46,6 +81,16 @@ nav.navbar.navbar-expand-lg.fixed-top
                 = link_to edit_user_registration_path, class: "dropdown-item" do
                   i.bi.bi-gear.me-2
                   | Edytuj profil
+              
+              // Notifications in mobile dropdown
+              li
+                a.dropdown-item[href="#" data-bs-toggle="dropdown" data-bs-target="#notificationsDropdown"]
+                  i.bi.bi-bell.me-2
+                  | Powiadomienia
+                  - if unread_count > 0
+                    span.badge.bg-danger.ms-1
+                      = unread_count
+              
               - if current_user.admin?
                 li
                   hr.dropdown-divider
@@ -88,6 +133,9 @@ nav.navbar.navbar-expand-lg.fixed-top
                     button.dropdown-item data-action="click->pwa#forceShowInstall"
                       i.bi.bi-download.me-2
                       | Force Show Install
+                  li
+                    hr.dropdown-divider
+
           
           - activities = Activity.where(created_at: Time.now.beginning_of_month..Time.now.end_of_month)
           .badge.bg-success.fs-6.px-3.py-2.me-2
