@@ -148,9 +148,14 @@
               i.bi.bi-plus-circle.me-2
               | Nowy konkurs
           .col-md-3.mb-2
+            = link_to admin_notifications_path, class: "btn btn-outline-warning w-100" do
+              i.bi.bi-bell.me-2
+              | Powiadomienia
+          .col-md-3.mb-2
             = link_to admin_users_path(status: 'deleted'), class: "btn btn-outline-danger w-100" do
               i.bi.bi-person-x.me-2
               | Usunięci użytkownicy
+        .row.mt-2
           .col-md-3.mb-2
             = link_to admin_activities_path, class: "btn btn-outline-info w-100" do
               i.bi.bi-activity.me-2

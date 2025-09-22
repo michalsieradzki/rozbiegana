@@ -65,6 +65,11 @@ Rails.application.routes.draw do
     end
     
     resources :settings, only: [:index, :update]
+    resources :notifications, only: [:index, :create, :destroy] do
+      collection do
+        delete :bulk_destroy
+      end
+    end
   end
 
   get "/service-worker.js" => "service_worker#service_worker"

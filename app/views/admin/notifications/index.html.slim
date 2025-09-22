@@ -1,0 +1,199 @@
+.container-fluid
+  .row
+    .col-12
+      h1.mb-4
+        i.bi.bi-bell.me-2
+        | Zarządzanie powiadomieniami
+
+      / Filters
+      .mb-3
+        = link_to "Wszystkie", admin_notifications_path, class: "btn btn-outline-primary btn-sm m-2 #{'active' unless params[:filter]}"
+        = link_to "Nieprzeczytane", admin_notifications_path(filter: 'unread'), class: "btn btn-outline-warning btn-sm #{'active' if params[:filter] == 'unread'}"
+        = link_to "Wysłane przez adminów", admin_notifications_path(filter: 'admin_sent'), class: "btn btn-outline-info btn-sm #{'active' if params[:filter] == 'admin_sent'}"
+
+      / Send notification form
+      .card.mb-4
+        .card-header
+          h5.mb-0
+            i.bi.bi-send.me-2
+            | Wyślij powiadomienie
+        .card-body
+          = form_with model: [:admin, @notification], local: true do |f|
+            .row
+              .col-md-6
+                .mb-3
+                  = f.label :title, "Tytuł", class: "form-label"
+                  = f.text_field :title, class: "form-control", required: true, maxlength: 100
+                
+                .mb-3
+                  = f.label :notification_type, "Typ", class: "form-label"
+                  = f.select :notification_type, 
+                      [['Informacja', 'info'], ['Sukces', 'success'], ['Ostrzeżenie', 'warning'], ['Błąd', 'error']], 
+                      {}, { class: "form-select" }
+              
+              .col-md-6
+                .mb-3
+                  = f.label :body, "Treść", class: "form-label"
+                  = f.text_area :body, class: "form-control", rows: 4, required: true, maxlength: 500
+                
+                .mb-3
+                  = label_tag :user_ids, "Odbiorcy", class: "form-label"
+                  = select_tag "notification[user_ids][]", 
+                      options_from_collection_for_select(@users, :first, :second, []), 
+                      { multiple: true, class: "form-select", id: "user-select" }
+                  small.text-muted Wybierz użytkowników (można wyszukiwać)
+                
+                .form-check.mb-3
+                  = check_box_tag :send_to_all, "1", false, class: "form-check-input", id: "send-to-all"
+                  = label_tag :send_to_all, "Wyślij do wszystkich użytkowników", class: "form-check-label"
+            
+            = f.submit "Wyślij powiadomienie", class: "btn btn-success"
+
+      / Notifications list
+      .card
+        .card-header.d-flex.justify-content-between.align-items-center
+          h5.mb-0 Lista powiadomień
+          button.btn.btn-outline-danger.btn-sm#bulk-delete-btn style="display: none;" onclick="submitBulkForm()"
+            | Usuń zaznaczone
+        
+        .card-body
+          table.table.table-hover
+            thead
+              tr
+                th
+                  input.form-check-input type="checkbox" id="select-all"
+                th Data
+                th Odbiorca
+                th Tytuł
+                th Typ
+                th Status
+                th Akcje
+            tbody
+              - @notifications.each do |notification|
+                tr
+                  td
+                    = check_box_tag "notification_ids[]", notification.id, false, class: "form-check-input notification-checkbox"
+                  td
+                    = notification.created_at.strftime("%d.%m.%Y %H:%M")
+                  td
+                    = notification.user.username
+                    br
+                    small.text-muted = notification.user.email
+                  td = notification.title
+                  td
+                    - case notification.notification_type
+                      - when 'success'
+                        span.badge.bg-success = notification.notification_type
+                      - when 'warning'
+                        span.badge.bg-warning = notification.notification_type
+                      - when 'error'
+                        span.badge.bg-danger = notification.notification_type
+                      - else
+                        span.badge.bg-info = notification.notification_type
+                  td
+                    - if notification.read
+                      span.badge.bg-secondary Przeczytane
+                    - else
+                      span.badge.bg-primary Nieprzeczytane
+                  td
+                    a.btn.btn-outline-danger.btn-sm.delete-btn[href="#" data-notification-id="#{notification.id}"]
+                      | Usuń
+          
+          / Bulk delete form (hidden)
+          = form_with url: bulk_destroy_admin_notifications_path, method: :delete, local: true, id: "bulk-form", style: "display: none;" do |f|
+            / This form is hidden and will be submitted by JavaScript
+          
+          / Pagination
+          .d-flex.justify-content-center.mt-4
+            = paginate @notifications
+
+/ jQuery and Select2
+script[src="https://code.jquery.com/jquery-3.6.0.min.js"]
+link[rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"]
+script[src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"]
+
+javascript:
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Select2
+    $('#user-select').select2({
+      placeholder: "Wybierz użytkowników...",
+      allowClear: true,
+      width: '100%'
+    });
+    
+    // Select all checkbox
+    const selectAll = document.getElementById('select-all');
+    const checkboxes = document.querySelectorAll('.notification-checkbox');
+    const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+    
+    selectAll.addEventListener('change', function() {
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+      });
+      toggleBulkDeleteBtn();
+    });
+    
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', toggleBulkDeleteBtn);
+    });
+    
+    function toggleBulkDeleteBtn() {
+      const checkedBoxes = document.querySelectorAll('.notification-checkbox:checked');
+      bulkDeleteBtn.style.display = checkedBoxes.length > 0 ? 'inline-block' : 'none';
+    }
+    
+    // Send to all checkbox
+    const sendToAll = document.getElementById('send-to-all');
+    const userSelect = document.getElementById('user-select');
+    
+    sendToAll.addEventListener('change', function() {
+      if (this.checked) {
+        $('#user-select').prop('disabled', true).trigger('change');
+        $('#user-select').val(null).trigger('change');
+      } else {
+        $('#user-select').prop('disabled', false).trigger('change');
+      }
+    });
+    
+    // Delete buttons
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const notificationId = this.dataset.notificationId;
+        
+        if (confirm('Czy na pewno usunąć to powiadomienie?')) {
+          // Create form and submit
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = `/admin/notifications/${notificationId}`;
+          
+          const methodInput = document.createElement('input');
+          methodInput.type = 'hidden';
+          methodInput.name = '_method';
+          methodInput.value = 'delete';
+          
+          const tokenInput = document.createElement('input');
+          tokenInput.type = 'hidden';
+          tokenInput.name = 'authenticity_token';
+          tokenInput.value = document.querySelector('meta[name="csrf-token"]').content;
+          
+          form.appendChild(methodInput);
+          form.appendChild(tokenInput);
+          document.body.appendChild(form);
+          form.submit();
+        }
+      });
+    });
+  });
+  
+  function submitBulkForm() {
+    const checkedBoxes = document.querySelectorAll('.notification-checkbox:checked');
+    if (checkedBoxes.length === 0) {
+      alert('Nie wybrano żadnych powiadomień');
+      return;
+    }
+    
+    if (confirm('Czy na pewno usunąć zaznaczone powiadomienia?')) {
+      document.getElementById('bulk-form').submit();
+    }
+  }

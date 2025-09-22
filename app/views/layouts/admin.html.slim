@@ -38,6 +38,10 @@ html
               i.bi.bi-activity.me-2
               | Aktywności
           li.nav-item.mb-2
+            = link_to admin_notifications_path, class: "nav-link text-white #{'active' if request.path.include?('notifications')}" do
+              i.bi.bi-bell.me-2
+              | Powiadomienia
+          li.nav-item.mb-2
             = link_to admin_settings_path, class: "nav-link text-white #{'active' if request.path.include?('settings')}" do
               i.bi.bi-gear.me-2
               | Ustawienia
