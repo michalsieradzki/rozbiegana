@@ -9,6 +9,7 @@ class RoomMessage < ApplicationRecord
   scope :for_display, -> { order(created_at: :asc) }
   
   after_create_commit :broadcast_to_room
+  after_create_commit :notify_room_members
   
   private
   
@@ -20,5 +21,21 @@ class RoomMessage < ApplicationRecord
       locals: { message: self }
     )
   end
+
+  def notify_room_members
+    # Powiadom członków pokoju o nowej wiadomości (oprócz autora)
+    room.room_memberships.includes(:user).each do |membership|
+      next if membership.user_id == user_id # Nie powiadamiaj autora
+      
+      Notification.create_for_user(
+        membership.user,
+        "Nowa wiadomość w #{room.name}",
+        "#{user.username}: #{content.truncate(50)}",
+        'info',
+        { notification_key: 'chat_messages' }
+      )
+    end
+  end
+
 end
 

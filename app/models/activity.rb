@@ -5,8 +5,7 @@ class Activity < ApplicationRecord
   has_many :comments, dependent: :delete_all
   has_many :likes, dependent: :delete_all
   # has_noticed_notifications model_name: 'Notification', dependent: :delete_all
-  # has_many :notifications, as: :recipient, dependent: :destroy
-
+  has_many :notifications, as: :recipient, dependent: :destroy
   validates :distance, presence: true, numericality: { greater_than_or_equal_to: 5 }
 
 
@@ -45,15 +44,14 @@ class Activity < ApplicationRecord
 
   def calculate_score
     return 0 if user.team.name == "niesklasyfikowany"
-    return 0 unless competition
+    return 0 unless self.competition 
     
-    competition.calculate_score_for_activity(self)
+    self.competition.calculate_score_for_activity(self)
   end
 
   private
 
   def assign_to_current_competition
-    # Automatycznie przypisz do głównego aktywnego konkursu jeśli nie ma przypisanego
     if competition.nil?
       self.competition = Competition.current_main_competition
     end

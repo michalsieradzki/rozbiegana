@@ -45,10 +45,7 @@
             strong Data rejestracji:
             br
             = @user.created_at.strftime('%d.%m.%Y %H:%M')
-          .col-md-6
-            strong Ostatnie logowanie:
-            br
-            = @user.last_sign_in_at&.strftime('%d.%m.%Y %H:%M') || 'Nigdy'
+
 
     .card
       .card-header.d-flex.justify-content-between.align-items-center

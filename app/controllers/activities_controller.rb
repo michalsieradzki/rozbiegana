@@ -18,7 +18,7 @@ class ActivitiesController < ApplicationController
     @comments = @activity.comments
     @comment = Comment.new
 
-    mark_notifications_as_read
+    # mark_notifications_as_read
   end
 
   # GET /activities/new
@@ -111,12 +111,7 @@ class ActivitiesController < ApplicationController
   end
 
   def activity_params
-    params.require(:activity).permit(:hours, :minutes, :seconds, :distance, :competition_id, :description, :image, :score, :user_id)
+    params.require(:activity).permit(:hours, :minutes, :seconds, :distance, :competition_id, :description, :image, :score, :user_id, :is_official)
   end
 
-  def mark_notifications_as_read
-    if current_user
-      @activity.notifications.where(recipient: current_user).unread.mark_as_read!
-    end
-  end
 end

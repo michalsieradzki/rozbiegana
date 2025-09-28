@@ -80,16 +80,19 @@ class Competition < ApplicationRecord
   end
 
   def calculate_points_score(activity)
-    base_score = case activity.pace
-                 when 0...300 then activity.distance.floor * 3
-                 when 300...330 then activity.distance.floor * 2.5
-                 when 330...360 then activity.distance.floor * 2
-                 when 360...390 then activity.distance.floor * 1.5
-                 else activity.distance.floor * 1
-                 end
-    
-    # Dodatkowe bonusy wg konfiguracji konkursu
-    base_score * (points_multiplier || 1.0)
+    if activity.is_official
+      # Oficjalny trening: tylko dystans × points_multiplier (bez bonusu za tempo)
+      activity.distance.floor * (points_multiplier || 1.0)
+    else
+      # Zwykły trening: standardowe punkty z bonusem za tempo
+      case activity.pace
+      when 0...300 then activity.distance.floor * 3
+      when 300...330 then activity.distance.floor * 2.5
+      when 330...360 then activity.distance.floor * 2
+      when 360...390 then activity.distance.floor * 1.5
+      else activity.distance.floor * 1
+      end
+    end
   end
 
   def calculate_pace_score(activity)
