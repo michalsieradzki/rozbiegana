@@ -14,6 +14,21 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  # FORCE OVERRIDE redirect_to method
+  def redirect_to(options = {}, response_options_and_flash = {})
+    if Rails.env.production?
+      # Jesli to jest path helper (symbol lub string zaczynający się od /)
+      if options.is_a?(String)
+        if options.start_with?('/') && !options.include?('20168')
+          options = "http://srv29.mikr.us:20168#{options}"
+        elsif options.start_with?('http://srv29.mikr.us') && !options.include?('20168')
+          options = options.gsub('http://srv29.mikr.us', 'http://srv29.mikr.us:20168')
+        end
+      end
+    end
+    super(options, response_options_and_flash)
+  end
+  
   # Override Devise redirect path after login
   def after_sign_in_path_for(resource)
     if Rails.env.production?
