@@ -18,6 +18,12 @@ Rails.application.configure do
   # Force SECRET_KEY_BASE from environment variable
   config.secret_key_base = ENV['SECRET_KEY_BASE']
 
+  # Fix CSRF and host validation issues
+  config.hosts << 'srv29.mikr.us'
+  config.hosts << 'srv29.mikr.us:20168'
+  config.hosts << 'localhost'
+  config.hosts << 'localhost:3000'
+
   # Ensures that a master key has been made available in ENV["RAILS_MASTER_KEY"], config/master.key, or an environment
   # key such as config/credentials/production.key. This key is used to decrypt credentials (and other encrypted files).
   # config.require_master_key = true
@@ -119,7 +125,8 @@ Rails.application.configure do
   # Ustawienia URL z portem
   config.action_controller.default_url_options = { 
     host: 'srv29.mikr.us', 
-    port: 20168 
+    port: 20168,
+    protocol: 'http'
   }
 
   config.action_mailer.default_url_options = { 
