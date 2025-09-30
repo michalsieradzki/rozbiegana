@@ -24,6 +24,22 @@ Rails.application.configure do
   config.hosts << 'localhost'
   config.hosts << 'localhost:3000'
 
+  # DODAJ TO - napraw base_url dla CSRF
+  config.force_ssl = false
+  config.action_controller.forgery_protection_origin_check = false
+
+  # Albo ustaw poprawny base_url
+  Rails.application.configure do
+    config.action_controller.default_url_options = { 
+      host: 'srv29.mikr.us', 
+      port: 20168,
+      protocol: 'http'
+    }
+    
+    # Fix dla request.base_url
+    config.action_controller.asset_host = 'http://srv29.mikr.us:20168'
+  end
+
   # Ensures that a master key has been made available in ENV["RAILS_MASTER_KEY"], config/master.key, or an environment
   # key such as config/credentials/production.key. This key is used to decrypt credentials (and other encrypted files).
   # config.require_master_key = true
@@ -57,7 +73,7 @@ Rails.application.configure do
   # # config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = false
+  # config.force_ssl = false
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
