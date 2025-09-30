@@ -47,7 +47,7 @@ Rails.application.configure do
   end
 
   # Assets configuration
-  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present? || ENV['RENDER'].present?
+  config.public_file_server.enabled = true  # FORCE TRUE
   config.assets.compile = false
   
   # Store uploaded files on the local file system (see config/storage.yml for options).
