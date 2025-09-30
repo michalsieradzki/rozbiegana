@@ -138,7 +138,7 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  # Ustawienia URL z portem
+  # Ustawienia URL z portem - NAPRAW TO
   config.action_controller.default_url_options = { 
     host: 'srv29.mikr.us', 
     port: 20168,
@@ -150,6 +150,15 @@ Rails.application.configure do
     host: 'srv29.mikr.us', 
     port: 20168 
   }
+
+  # Dodaj to żeby naprawić routes URL generation
+  Rails.application.config.to_prepare do
+    Rails.application.routes.default_url_options = {
+      host: 'srv29.mikr.us',
+      port: 20168,
+      protocol: 'http'
+    }
+  end
 
   # Ustawienia URL z portem dla linków
   config.action_controller.default_url_options = { 
