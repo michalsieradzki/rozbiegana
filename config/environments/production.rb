@@ -159,5 +159,14 @@ Rails.application.configure do
     host: "srv29.mikr.us", 
     port: 20168 
   }
+
+  # BARDZO WAŻNE - to musi być na samym końcu initialize
+  Rails.application.config.after_initialize do
+    Rails.application.routes.default_url_options = {
+      host: 'srv29.mikr.us',
+      port: 20168,
+      protocol: 'http'
+    }
+  end
 end
 
