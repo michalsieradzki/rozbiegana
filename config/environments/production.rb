@@ -2,16 +2,8 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-  # Code is not reloaded between requests.
   config.enable_reloading = false
-
-  # Eager load code on boot. This eager loads most of Rails and
-  # your application in memory, allowing both threaded web servers
-  # and those relying on copy on write to perform better.
-  # Rake tasks automatically ignore this option for performance.
   config.eager_load = true
-
-  # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local = false
   config.action_controller.perform_caching = true
 
@@ -24,42 +16,40 @@ Rails.application.configure do
   config.hosts << 'localhost'
   config.hosts << 'localhost:3000'
 
-  # DODAJ TO - napraw base_url dla CSRF
+  # DISABLE CSRF for now
   config.force_ssl = false
   config.action_controller.forgery_protection_origin_check = false
 
-  # Albo ustaw poprawny base_url
-  Rails.application.configure do
-    config.action_controller.default_url_options = { 
-      host: 'srv29.mikr.us', 
+  # KLUCZOWE - napraw assety i URL-e
+  config.action_controller.asset_host = 'http://srv29.mikr.us:20168'
+  config.action_mailer.asset_host = 'http://srv29.mikr.us:20168'
+  
+  # URL options dla wszystkich akcji
+  config.action_controller.default_url_options = { 
+    host: 'srv29.mikr.us', 
+    port: 20168,
+    protocol: 'http'
+  }
+
+  config.action_mailer.default_url_options = { 
+    protocol: 'http', 
+    host: 'srv29.mikr.us', 
+    port: 20168 
+  }
+
+  # Routes URL generation
+  Rails.application.config.to_prepare do
+    Rails.application.routes.default_url_options = {
+      host: 'srv29.mikr.us',
       port: 20168,
       protocol: 'http'
     }
-    
-    # Fix dla request.base_url
-    config.action_controller.asset_host = 'http://srv29.mikr.us:20168'
   end
 
-  # Ensures that a master key has been made available in ENV["RAILS_MASTER_KEY"], config/master.key, or an environment
-  # key such as config/credentials/production.key. This key is used to decrypt credentials (and other encrypted files).
-  # config.require_master_key = true
-  # Disable serving static files from `public/`, relying on NGINX/Apache to do so instead.
-  # config.public_file_server.enabled = false
+  # Assets configuration
   config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present? || ENV['RENDER'].present?
-
-  # Compress CSS using a preprocessor.
-  # config.assets.css_compressor = :sass
-
-  # Do not fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
-
-  # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # config.asset_host = "http://assets.example.com"
-
-  # Specifies the header that your server uses for sending files.
-  # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
-  # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
-
+  
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :cloudinary
 
@@ -101,8 +91,6 @@ Rails.application.configure do
   
   # MAIL SERVER CONFIGURATION
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.default_url_options = { protocol: 'https', :host => 'rozbieganakruszwica@o2.pl' }
-  
   config.action_mailer.smtp_settings = {
       address: 'poczta.o2.pl',
       port: 465,
