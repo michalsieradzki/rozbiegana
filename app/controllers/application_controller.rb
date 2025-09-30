@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  # Temporary fix for CSRF issues in production
+  skip_forgery_protection if Rails.env.production?
   before_action :authenticate_user!
   # before_action :set_notifications, if: :current_user  <- usuwamy
 
