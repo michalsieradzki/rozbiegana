@@ -47,20 +47,9 @@ html
               | Ustawienia
         
         .mt-auto.p-3.border-top
-          .dropdown
-            button.btn.btn-outline-light.dropdown-toggle.w-100[type="button" data-bs-toggle="dropdown"]
-              = current_user.username
-            ul.dropdown-menu
-              li
-                = link_to root_path, class: "dropdown-item" do
-                  i.bi.bi-house.me-2
-                  | Powrót do strony
-              li
-                hr.dropdown-divider
-              li
-                = button_to destroy_user_session_path, method: :delete, class: "dropdown-item" do
-                  i.bi.bi-box-arrow-right.me-2
-                  | Wyloguj
+          = link_to root_path, class: "btn btn-outline-light w-100" do
+            i.bi.bi-house.me-2
+            | Powrót do strony głównej
 
       // Main content
       main#main-content

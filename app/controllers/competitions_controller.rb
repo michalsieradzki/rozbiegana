@@ -4,12 +4,13 @@ class CompetitionsController < ApplicationController
     @all_active_competitions = Competition.active.order(:created_at)
     
     if @current_competition
-      # Używamy nowego systemu
-      @users = User.joins(:activities, :team)
-                   .where(activities: { competition: @current_competition })
-                   .where.not('teams.id = ?', 1) # niesklasyfikowani
+      # Pokazujemy wszystkich użytkowników z drużyn (poza niesklasyfikowanymi)
+      # nawet tych z zerowymi punktami
+      @users = User.joins(:team)
+                   .where.not('teams.id = ?', 1)
+                   .joins("LEFT JOIN activities ON activities.user_id = users.id AND activities.competition_id = #{@current_competition.id}")
                    .group('users.id')
-                   .select('users.*, SUM(activities.score) AS total_score')
+                   .select('users.*, COALESCE(SUM(activities.score), 0) AS total_score')
                    .order('total_score DESC')
       
       # Punkty zespołów
